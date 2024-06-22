@@ -8,19 +8,54 @@ public class ContainerSize {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(nullable = false)
     private Double length;
+
+    @Column(nullable = false)
     private Double width;
+
+    @Column(nullable = false)
     private Double height;
+
+    @Column(nullable = false)
     private Double volume;
+
+    @Column(nullable = false)
     private Double weight;
+
+    @Column(nullable = false)
     private Double loadCapacity;
+
+    @Column(nullable = false)
     private Double maxLoad;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "containerTypeId", nullable = false)
     private ContainerType containerType;
 
-    // Getters and Setters
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shipId")
+    private Ship ship;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "scheduleId")
+    private Schedule schedule;
+
+    public ContainerSize() {}
+
+    public ContainerSize(Double length, Double width, Double height, Double volume, Double weight, Double loadCapacity, Double maxLoad, ContainerType containerType) {
+        this.length = length;
+        this.width = width;
+        this.height = height;
+        this.volume = volume;
+        this.weight = weight;
+        this.loadCapacity = loadCapacity;
+        this.maxLoad = maxLoad;
+        this.containerType = containerType;
+    }
+
+// Getters and Setters
+
     public Integer getId() {
         return id;
     }
@@ -91,5 +126,21 @@ public class ContainerSize {
 
     public void setContainerType(ContainerType containerType) {
         this.containerType = containerType;
+    }
+
+    public Ship getShip() {
+        return ship;
+    }
+
+    public void setShip(Ship ship) {
+        this.ship = ship;
+    }
+
+    public Schedule getSchedule() {
+        return schedule;
+    }
+
+    public void setSchedule(Schedule schedule) {
+        this.schedule = schedule;
     }
 }

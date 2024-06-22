@@ -1,9 +1,12 @@
 package com.example.ctms.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-public record ContainerSizeDTO(
+public record ContainerDTO(
         Integer id,
+        Integer containerSizeId,
+        String containerSizeDetails,
         Double length,
         Double width,
         Double height,
@@ -11,12 +14,13 @@ public record ContainerSizeDTO(
         Double weight,
         Double loadCapacity,
         Double maxLoad,
-        Integer containerTypeId,
-        String containerTypeName,
-        String containerTypeType,
+        String status,
         Integer shipId,
         String shipName,
         Integer scheduleId,
-        String scheduleStatus,
-        LocalDateTime departureTime
+        String routeName,
+        LocalDateTime departureTime,
+        LocalDateTime estimatedArrivalTime,
+        String location,
+        List<ContainerHistoryDTO> history
 ) {}
