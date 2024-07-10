@@ -1,14 +1,16 @@
 package com.example.ctms.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Container {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(length = 11, unique = true)
+    private String containerCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "containerSizeId", nullable = false)
@@ -18,38 +20,44 @@ public class Container {
     private String status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shipId")
-    private Ship ship;
+    @JoinColumn(name = "portLocationId")
+    private PortLocation portLocation;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "scheduleId")
-    private Schedule schedule;
+    @JoinColumn(name = "containerSupplierId")
+    private ContainerSupplier containerSupplier;
 
-    @Column
-    private String location;
+    @Column(nullable = false)
+    private boolean hasGoods;
 
     @OneToMany(mappedBy = "container", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ContainerHistory> history = new ArrayList<>();
 
+    @OneToMany(mappedBy = "container", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ShipSchedule> shipSchedules = new ArrayList<>();
+
+
+    // Getters and Setters
     public Container() {}
 
-    public Container(ContainerSize containerSize, String status, Ship ship, Schedule schedule, String location) {
+    public Container(String containerCode, ContainerSize containerSize, String status, PortLocation portLocation, ContainerSupplier containerSupplier, boolean hasGoods) {
+        this.containerCode = containerCode;
         this.containerSize = containerSize;
         this.status = status;
-        this.ship = ship;
-        this.schedule = schedule;
-        this.location = location;
-        this.history = new ArrayList<>(); // Initialize the history list
+        this.portLocation = portLocation;
+        this.containerSupplier = containerSupplier;
+        this.hasGoods = hasGoods;
     }
 
-// Getters and Setters
+    // Getters and setters omitted for brevity
 
-    public Integer getId() {
-        return id;
+
+    public String getContainerCode() {
+        return containerCode;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setContainerCode(String containerCode) {
+        this.containerCode = containerCode;
     }
 
     public ContainerSize getContainerSize() {
@@ -68,28 +76,28 @@ public class Container {
         this.status = status;
     }
 
-    public Ship getShip() {
-        return ship;
+    public PortLocation getPortLocation() {
+        return portLocation;
     }
 
-    public void setShip(Ship ship) {
-        this.ship = ship;
+    public void setPortLocation(PortLocation portLocation) {
+        this.portLocation = portLocation;
     }
 
-    public Schedule getSchedule() {
-        return schedule;
+    public ContainerSupplier getContainerSupplier() {
+        return containerSupplier;
     }
 
-    public void setSchedule(Schedule schedule) {
-        this.schedule = schedule;
+    public void setContainerSupplier(ContainerSupplier containerSupplier) {
+        this.containerSupplier = containerSupplier;
     }
 
-    public String getLocation() {
-        return location;
+    public boolean isHasGoods() {
+        return hasGoods;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setHasGoods(boolean hasGoods) {
+        this.hasGoods = hasGoods;
     }
 
     public List<ContainerHistory> getHistory() {
@@ -98,5 +106,19 @@ public class Container {
 
     public void setHistory(List<ContainerHistory> history) {
         this.history = history;
+    }
+
+    public List<ShipSchedule> getShipSchedules() {
+        return shipSchedules;
+    }
+
+    public void setShipSchedules(List<ShipSchedule> shipSchedules) {
+        this.shipSchedules = shipSchedules;
+    }
+
+    public void addShipSchedule(ShipSchedule shipSchedule) {
+        if (!shipSchedules.contains(shipSchedule)) {
+            shipSchedules.add(shipSchedule);
+        }
     }
 }

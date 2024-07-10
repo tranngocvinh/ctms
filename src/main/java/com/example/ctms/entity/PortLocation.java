@@ -1,9 +1,10 @@
 package com.example.ctms.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "ports_location")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class PortLocation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,6 +18,7 @@ public class PortLocation {
 
     @Column(name = "lon", nullable = false)
     private Double lon;
+
 
     public PortLocation() {}
 
@@ -57,4 +59,7 @@ public class PortLocation {
     public void setLon(Double lon) {
         this.lon = lon;
     }
+
+
+
 }

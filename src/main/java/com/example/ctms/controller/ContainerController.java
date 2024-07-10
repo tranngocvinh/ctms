@@ -11,32 +11,45 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/containers")
 public class ContainerController {
+
     @Autowired
     private ContainerService containerService;
 
     @GetMapping
-    public List<ContainerDTO> getAllContainers() {
-        return containerService.getAllContainers();
+    public ResponseEntity<List<ContainerDTO>> getAllContainers() {
+        return ResponseEntity.ok(containerService.getAllContainers());
     }
 
-    @GetMapping("/{id}")
-    public ContainerDTO getContainerById(@PathVariable Integer id) {
-        return containerService.getContainerById(id);
+    @GetMapping("/{containerCode}")
+    public ResponseEntity<ContainerDTO> getContainerById(@PathVariable String containerCode) {
+        return ResponseEntity.ok(containerService.getContainerById(containerCode));
     }
 
     @PostMapping
-    public ContainerDTO addContainer(@RequestBody ContainerDTO containerDTO) {
-        return containerService.addContainer(containerDTO);
+    public ResponseEntity<ContainerDTO> addContainer(@RequestBody ContainerDTO containerDTO) {
+        return ResponseEntity.ok(containerService.addContainer(containerDTO));
     }
 
-    @PutMapping("/{id}")
-    public ContainerDTO updateContainer(@PathVariable Integer id, @RequestBody ContainerDTO containerDTO) {
-        return containerService.updateContainer(id, containerDTO);
+//    @PutMapping("/{containerCode}")
+//    public ResponseEntity<ContainerDTO> updateContainer(@PathVariable String containerCode, @RequestBody ContainerDTO containerDTO) {
+//        return ResponseEntity.ok(containerService.updateContainer(containerCode, containerDTO));
+//    }
+
+    @DeleteMapping("/{containerCode}")
+    public ResponseEntity<Void> deleteContainer(@PathVariable String containerCode) {
+        containerService.deleteContainer(containerCode);
+        return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteContainer(@PathVariable Integer id) {
-        containerService.deleteContainer(id);
+    @PostMapping("/allocate/ship")
+    public ResponseEntity<Void> allocateEmptyContainersToShip(@RequestParam double totalCapacity, @RequestParam Integer shipId) {
+        containerService.allocateEmptyContainersToShip(totalCapacity, shipId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/allocate/port")
+    public ResponseEntity<Void> allocateEmptyContainersToPort(@RequestParam int numberOfContainers, @RequestParam String portName) {
+        containerService.allocateEmptyContainersToPort(numberOfContainers, portName);
         return ResponseEntity.ok().build();
     }
 }

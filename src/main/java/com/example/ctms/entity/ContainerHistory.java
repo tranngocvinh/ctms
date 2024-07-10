@@ -1,7 +1,6 @@
 package com.example.ctms.entity;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -30,6 +29,14 @@ public class ContainerHistory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "scheduleId", nullable = true)
     private Schedule schedule;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "waypointId", nullable = true)
+    private Waypoint waypoint;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supplierId", nullable = true)
+    private ContainerSupplier supplier;
 
     public Integer getId() {
         return id;
@@ -87,4 +94,19 @@ public class ContainerHistory {
         this.schedule = schedule;
     }
 
+    public Waypoint getWaypoint() {
+        return waypoint;
+    }
+
+    public void setWaypoint(Waypoint waypoint) {
+        this.waypoint = waypoint;
+    }
+
+    public ContainerSupplier getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(ContainerSupplier supplier) {
+        this.supplier = supplier;
+    }
 }

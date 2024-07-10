@@ -1,9 +1,11 @@
 package com.example.ctms.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
+
 public class Ship {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +29,7 @@ public class Ship {
     @Column(nullable = false)
     private String status; // Trạng thái của tàu (Active, Inactive)
 
-    @OneToMany(mappedBy = "ship", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "ship", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private List<ContainerSize> containerSizes;
 
     public Ship(String name, String company, Double capacity, String registrationNumber, Integer yearBuilt, String status) {

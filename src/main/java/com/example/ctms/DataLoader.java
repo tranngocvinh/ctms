@@ -4,7 +4,6 @@ import com.example.ctms.entity.*;
 import com.example.ctms.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 @Profile("data-load")
+//@EnableJpaRepositories
 @Component
 public class DataLoader implements CommandLineRunner {
 
@@ -35,6 +35,15 @@ public class DataLoader implements CommandLineRunner {
 
     @Autowired
     private WaypointRepository waypointRepository;
+
+    @Autowired
+    private ShipScheduleRepository shipScheduleRepository;
+
+    @Autowired
+    private PortLocationRepository portLocationRepository;
+
+    @Autowired
+    private ContainerSupplierRepository containerSupplierRepository;
 
     @Override
     @Transactional
@@ -90,11 +99,34 @@ public class DataLoader implements CommandLineRunner {
 
         scheduleRepository.saveAll(Arrays.asList(schedule1, schedule2));
 
+
+
+        // Initialize Port Locations
+        PortLocation portLocation1 = new PortLocation("Haiphong Port", 20.84274, 106.7726);
+        PortLocation portLocation2 = new PortLocation("Singapore Port", 1.3521, 103.8198);
+        portLocationRepository.saveAll(Arrays.asList(portLocation1, portLocation2));
+
+        // Initialize Container Suppliers
+        ContainerSupplier containerSupplier1 = new ContainerSupplier("Supplier A", "Address A", "123456789", "emailA@example.com", "www.supplierA.com", "Repair", null);
+        ContainerSupplier containerSupplier2 = new ContainerSupplier("Supplier B", "Address B", "987654321", "emailB@example.com", "www.supplierB.com", "Repair", null);
+        containerSupplierRepository.saveAll(Arrays.asList(containerSupplier1, containerSupplier2));
+
         // Initialize Containers
-        Container container1 = new Container(size20FeetNormal1, "In Storage", null, null, "Haiphong Port");
-        Container container2 = new Container(size20FeetNormal1, "On Ship", ship1, schedule1, "On ship Vina Express");
-        Container container3 = new Container(size40FeetNormal1, "In Transit", ship2, schedule2, "On ship Pacific Trader");
+        Container container1 = new Container("MSKU1234567", size20FeetNormal1, "Under Maintenance", null, null, false);
+        Container container2 = new Container("TEMU7654321", size20FeetNormal1, "Under Maintenance", null, null, false);
+        Container container3 = new Container("CSQU9876543", size40FeetNormal1, "Under Maintenance", null, null, false);
 
         containerRepository.saveAll(Arrays.asList(container1, container2, container3));
+
+        // Initialize ShipSchedule (intermediate table) entries
+        ShipSchedule shipSchedule1 = new ShipSchedule(container1,ship1, schedule1);
+        ShipSchedule shipSchedule2 = new ShipSchedule(container2,ship2, schedule2);
+        shipScheduleRepository.saveAll(Arrays.asList(shipSchedule1, shipSchedule2));
+// Associate ship schedules with containers
+//        container2.setShipSchedules(Arrays.asList(shipSchedule1));
+//        container3.setShipSchedules(Arrays.asList(shipSchedule2));
+
+
+        containerRepository.saveAll(Arrays.asList(container2, container3));
     }
 }

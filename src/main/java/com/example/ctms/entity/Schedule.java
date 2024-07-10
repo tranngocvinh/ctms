@@ -1,7 +1,9 @@
 package com.example.ctms.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -11,7 +13,8 @@ public class Schedule {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "routeId", nullable = false)
+    @JoinColumn(name = "route_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "schedules"})
     private Route route;
 
     @Column(nullable = false)
@@ -32,11 +35,10 @@ public class Schedule {
     @Column(length = 1000)
     private String notes;
 
-    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Container> containers;
+    @OneToMany(mappedBy = "schedule", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    private List<ShipSchedule> shipSchedules = new ArrayList<>() ;
 
-    public Schedule() {
-    }
+    public Schedule() {}
 
     public Schedule(Route route, LocalDateTime departureTime, LocalDateTime estimatedArrivalTime, LocalDateTime actualDepartureTime, LocalDateTime actualArrivalTime, String status, String notes) {
         this.route = route;
@@ -48,7 +50,7 @@ public class Schedule {
         this.notes = notes;
     }
 
-// Getters and Setters
+    // Getters and Setters
 
     public Integer getId() {
         return id;
@@ -114,11 +116,18 @@ public class Schedule {
         this.notes = notes;
     }
 
-    public List<Container> getContainers() {
-        return containers;
+    public List<ShipSchedule> getShipSchedules() {
+        return shipSchedules;
     }
 
-    public void setContainers(List<Container> containers) {
-        this.containers = containers;
+    public void setShipSchedules(List<ShipSchedule> shipSchedules) {
+        this.shipSchedules = shipSchedules;
+    }
+
+    public void addShipSchedule(ShipSchedule shipSchedule){
+        if(!shipSchedules.contains(shipSchedule)){
+            shipSchedule.setSchedule(this); // Ensure the schedule reference is set
+            shipSchedules.add(shipSchedule);
+        }
     }
 }
