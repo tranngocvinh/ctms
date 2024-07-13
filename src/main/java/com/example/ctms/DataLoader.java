@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-@Profile("data-load")
+//@Profile("data-load")
 //@EnableJpaRepositories
 @Component
 public class DataLoader implements CommandLineRunner {
@@ -64,8 +64,8 @@ public class DataLoader implements CommandLineRunner {
         type40FeetRefrigerated = containerTypeRepository.findByNameAndType("40 feet", "Refrigerated").get(0);
 
         // Initialize Container Sizes with persisted ContainerTypes
-        ContainerSize size20FeetNormal1 = new ContainerSize(6.0, 2.4, 2.6, 37.44, 2000.0, 28000.0, 30000.0, type20FeetNormal);
-        ContainerSize size40FeetNormal1 = new ContainerSize(12.0, 2.4, 2.6, 74.88, 4000.0, 56000.0, 60000.0, type40FeetNormal);
+        ContainerSize size20FeetNormal1 = new ContainerSize(6.0, 2.4, 2.6, 37.44, 2000.1, 28000.0, 30000.0, type20FeetNormal);
+        ContainerSize size40FeetNormal1 = new ContainerSize(12.0, 2.4, 2.6, 74.88, 4000.1, 56000.0, 60000.0, type40FeetNormal);
 
         containerSizeRepository.saveAll(Arrays.asList(size20FeetNormal1, size40FeetNormal1));
 

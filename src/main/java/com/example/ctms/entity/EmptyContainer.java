@@ -2,6 +2,7 @@ package com.example.ctms.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 public class EmptyContainer {
@@ -25,6 +26,9 @@ public class EmptyContainer {
 
     @Column(nullable = false)
     private boolean fulfilled;
+
+    @OneToMany(mappedBy = "emptyContainer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EmptyContainerDetail> details;
 
     // Constructors, Getters, and Setters
 
@@ -84,5 +88,13 @@ public class EmptyContainer {
 
     public void setFulfilled(boolean fulfilled) {
         this.fulfilled = fulfilled;
+    }
+
+    public List<EmptyContainerDetail> getDetails() {
+        return details;
+    }
+
+    public void setDetails(List<EmptyContainerDetail> details) {
+        this.details = details;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.ctms.controller;
 
 import com.example.ctms.dto.ContainerDTO;
+import com.example.ctms.dto.EmptyContainerRequestDto;
 import com.example.ctms.service.ContainerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -42,8 +43,8 @@ public class ContainerController {
     }
 
     @PostMapping("/allocate/ship")
-    public ResponseEntity<Void> allocateEmptyContainersToShip(@RequestParam double totalCapacity, @RequestParam Integer shipId) {
-        containerService.allocateEmptyContainersToShip(totalCapacity, shipId);
+    public ResponseEntity<Void> allocateEmptyContainersToShip(@RequestBody EmptyContainerRequestDto request) {
+        containerService.allocateEmptyContainersToShip(request);
         return ResponseEntity.ok().build();
     }
 

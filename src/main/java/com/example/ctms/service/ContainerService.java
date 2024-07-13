@@ -1,6 +1,7 @@
 package com.example.ctms.service;
 
 import com.example.ctms.dto.ContainerDTO;
+import com.example.ctms.dto.EmptyContainerRequestDto;
 import com.example.ctms.entity.*;
 import com.example.ctms.mapper.ContainerMapper;
 import com.example.ctms.repository.*;
@@ -39,6 +40,9 @@ public class ContainerService {
 
     @Autowired
     private ShipScheduleRepository shipScheduleRepository;
+
+    @Autowired
+    private EmptyContainerDetailRepository emptyContainerDetailRepository;
 
     public List<ContainerDTO> getAllContainers() {
         List<Container> containers = containerRepository.findAll();
@@ -127,23 +131,44 @@ public class ContainerService {
     }
 
     @Transactional
-    public void allocateEmptyContainersToShip(double totalCapacity, Integer shipId) {
-        Ship ship = shipRepository.findById(shipId)
+    public void allocateEmptyContainersToShip(EmptyContainerRequestDto request) {
+        Ship ship = shipRepository.findById(request.getShipId())
                 .orElseThrow(() -> new RuntimeException("Ship not found"));
 
         double availableCapacity = ship.getCapacity() * 0.7; // 70% of ship's capacity
-        double usedCapacity = containerRepository.sumCapacityByShip(shipId);
+        double usedCapacity = containerRepository.sumCapacityByShip(request.getShipId());
 
-        if (usedCapacity + totalCapacity > availableCapacity) {
+        if (usedCapacity + request.getTotalCapacity() > availableCapacity) {
             throw new RuntimeException("Not enough capacity on the ship");
         }
 
-        EmptyContainer emptyContainerRequest = new EmptyContainer((int) totalCapacity, LocalDateTime.now(), null, ship, false);
+        EmptyContainer emptyContainerRequest = new EmptyContainer(
+                (int) request.getTotalCapacity(),
+                request.getRequestTime() != null ? request.getRequestTime() : LocalDateTime.now(),
+                request.getPortName(),
+                ship,
+                false
+        );
         emptyContainerRepository.save(emptyContainerRequest);
+
+        for (EmptyContainerRequestDto.ContainerDetailDto detail : request.getDetails()) {
+
+            ContainerSize containerSize = containerSizeRepository.findById(detail.getContainerSizeId())
+                    .orElseThrow(() -> new RuntimeException("ContainerSize not found"));
+
+            EmptyContainerDetail emptyContainerDetail = new EmptyContainerDetail(
+                    emptyContainerRequest,
+                    containerSize,
+                    detail.getQuantity()
+            );
+
+            emptyContainerDetailRepository.save(emptyContainerDetail);
+        }
 
         emptyContainerRequest.setFulfilled(true);
         emptyContainerRepository.save(emptyContainerRequest);
     }
+
 
     @Transactional
     public void allocateEmptyContainersToPort(int numberOfContainers, String portName) {
