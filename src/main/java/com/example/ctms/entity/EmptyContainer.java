@@ -1,5 +1,7 @@
 package com.example.ctms.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,8 +19,9 @@ public class EmptyContainer {
     @Column(nullable = false)
     private LocalDateTime requestTime;
 
-    @Column
-    private String portName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "port_id")
+    private PortLocation portLocation;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ship_id")
@@ -27,19 +30,34 @@ public class EmptyContainer {
     @Column(nullable = false)
     private boolean fulfilled;
 
+    @Column(nullable = false)
+    private int isApproved;
+
     @OneToMany(mappedBy = "emptyContainer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EmptyContainerDetail> details;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
     // Constructors, Getters, and Setters
 
     public EmptyContainer() {}
 
-    public EmptyContainer(int numberOfContainers, LocalDateTime requestTime, String portName, Ship ship, boolean fulfilled) {
+    public EmptyContainer(int numberOfContainers, LocalDateTime requestTime, PortLocation portLocation, Ship ship, boolean fulfilled,int isApproved) {
         this.numberOfContainers = numberOfContainers;
         this.requestTime = requestTime;
-        this.portName = portName;
+        this.portLocation = portLocation;
         this.ship = ship;
         this.fulfilled = fulfilled;
+        this.isApproved = isApproved;
+    }
+
+    public int getIsApproved() {
+        return isApproved;
+    }
+
+    public void setIsApproved(int isApproved) {
+        this.isApproved = isApproved;
     }
 
     public Integer getId() {
@@ -66,12 +84,12 @@ public class EmptyContainer {
         this.requestTime = requestTime;
     }
 
-    public String getPortName() {
-        return portName;
+    public PortLocation getPortLocation() {
+        return portLocation;
     }
 
-    public void setPortName(String portName) {
-        this.portName = portName;
+    public void setPortLocation(PortLocation portLocation) {
+        this.portLocation = portLocation;
     }
 
     public Ship getShip() {
@@ -96,5 +114,13 @@ public class EmptyContainer {
 
     public void setDetails(List<EmptyContainerDetail> details) {
         this.details = details;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 }

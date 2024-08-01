@@ -3,7 +3,10 @@ package com.example.ctms.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "ship_schedule", uniqueConstraints = @UniqueConstraint(columnNames = {"container_code", "schedule_id"}))
+@Table(name = "ship_schedule", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"container_code", "schedule_id"}),
+        @UniqueConstraint(columnNames = "schedule_id")
+})
 public class ShipSchedule {
 
     @Id
@@ -15,7 +18,7 @@ public class ShipSchedule {
     private Container container;
 
     @ManyToOne
-    @JoinColumn(name = "shipId", nullable = false)
+    @JoinColumn(name = "ship_id", nullable = false)
     private Ship ship;
 
     @ManyToOne

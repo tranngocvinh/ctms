@@ -17,7 +17,8 @@ import java.util.Optional;
 
 @EnableMBeanExport
 @RestController
-@RequestMapping("/api/v1/supplier")public class ContainerSupplierController {
+@RequestMapping("/api/v1/supplier")
+public class ContainerSupplierController {
 
     private ContainerSupplierService containerSupplierService ;
 

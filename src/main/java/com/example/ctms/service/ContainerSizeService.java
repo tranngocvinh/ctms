@@ -59,8 +59,6 @@ public class ContainerSizeService {
         ContainerType containerType = containerTypeRepository.findById(sizeDTO.containerType().id())
                 .orElseThrow(() -> new RuntimeException("ContainerType not found"));
 
-
-
         ContainerSize updatedSize = containerSizeRepository.findById(id)
                 .map(size -> {
                     size.setLength(sizeDTO.length());

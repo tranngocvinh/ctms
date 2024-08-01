@@ -1,6 +1,7 @@
 package com.example.ctms.service;
 
 import com.example.ctms.dto.ScheduleDTO;
+import com.example.ctms.dto.ScheduleSegmentDTO;
 import com.example.ctms.dto.WaypointDTO;
 import com.example.ctms.entity.*;
 import com.example.ctms.repository.*;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,15 +22,19 @@ public class ScheduleService {
     private final ContainerRepository containerRepository;
     private final ShipScheduleRepository shipScheduleRepository;
     private final ShipRepository shipRepository;
+    private final RouteSegmentRepository routeSegmentRepository;
+    private final ScheduleSegmentRepository scheduleSegmentRepository;
 
     @Autowired
-    public ScheduleService(ScheduleRepository scheduleRepository, RouteRepository routeRepository, WaypointRepository waypointRepository, ContainerRepository containerRepository, ShipScheduleRepository shipScheduleRepository, ShipRepository shipRepository) {
+    public ScheduleService(ScheduleRepository scheduleRepository, RouteRepository routeRepository, WaypointRepository waypointRepository, ContainerRepository containerRepository, ShipScheduleRepository shipScheduleRepository, ShipRepository shipRepository, RouteSegmentRepository routeSegmentRepository, ScheduleSegmentRepository scheduleSegmentRepository) {
         this.scheduleRepository = scheduleRepository;
         this.routeRepository = routeRepository;
         this.waypointRepository = waypointRepository;
         this.containerRepository = containerRepository;
         this.shipScheduleRepository = shipScheduleRepository;
         this.shipRepository = shipRepository;
+        this.routeSegmentRepository = routeSegmentRepository;
+        this.scheduleSegmentRepository = scheduleSegmentRepository;
     }
 
     public List<ScheduleDTO> getAllSchedules() {
@@ -68,6 +72,14 @@ public class ScheduleService {
             shipScheduleRepository.save(newShipSchedule);
         });
 
+        // Create ScheduleSegment entries
+        scheduleDTO.scheduleSegments().forEach(segmentDTO -> {
+            RouteSegment routeSegment = routeSegmentRepository.findById(segmentDTO.routeSegmentId())
+                    .orElseThrow(() -> new RuntimeException("RouteSegment not found with ID: " + segmentDTO.routeSegmentId()));
+            ScheduleSegment scheduleSegment = new ScheduleSegment(savedSchedule, routeSegment, segmentDTO.departureTime(), segmentDTO.arrivalTime());
+            scheduleSegmentRepository.save(scheduleSegment);
+        });
+
         return convertToDto(savedSchedule);
     }
 
@@ -95,6 +107,15 @@ public class ScheduleService {
                         shipScheduleRepository.save(shipSchedule);
                     });
 
+                    // Update ScheduleSegment entries
+                    scheduleSegmentRepository.deleteByScheduleId(schedule.getId());
+                    scheduleDTO.scheduleSegments().forEach(segmentDTO -> {
+                        RouteSegment routeSegment = routeSegmentRepository.findById(segmentDTO.routeSegmentId())
+                                .orElseThrow(() -> new RuntimeException("RouteSegment not found with ID: " + segmentDTO.routeSegmentId()));
+                        ScheduleSegment scheduleSegment = new ScheduleSegment(schedule, routeSegment, segmentDTO.departureTime(), segmentDTO.arrivalTime());
+                        scheduleSegmentRepository.save(scheduleSegment);
+                    });
+
                     return scheduleRepository.save(schedule);
                 })
                 .orElseThrow(() -> new RuntimeException("Schedule not found with ID: " + id));
@@ -104,6 +125,7 @@ public class ScheduleService {
 
     public void deleteSchedule(Integer id) {
         shipScheduleRepository.deleteByScheduleId(id);
+        scheduleSegmentRepository.deleteByScheduleId(id);
         scheduleRepository.deleteById(id);
     }
 
@@ -116,12 +138,13 @@ public class ScheduleService {
                 .map(Container::getContainerCode)
                 .collect(Collectors.toList());
 
-        Set<Integer> shipIdsSet = shipScheduleRepository.findByScheduleId(schedule.getId()).stream()
+        List<Integer> shipIds = shipScheduleRepository.findByScheduleId(schedule.getId()).stream()
                 .map(shipSchedule -> shipSchedule.getShip().getId())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
 
-// Nếu bạn cần chuyển đổi Set trở lại thành List
-        List<Integer> shipIds = new ArrayList<>(shipIdsSet);
+        List<ScheduleSegmentDTO> scheduleSegments = scheduleSegmentRepository.findBySchedule(schedule).stream()
+                .map(segment -> new ScheduleSegmentDTO(segment.getRouteSegment().getId(), segment.getDepartureTime(), segment.getArrivalTime()))
+                .collect(Collectors.toList());
 
         return new ScheduleDTO(
                 schedule.getId(),
@@ -135,7 +158,8 @@ public class ScheduleService {
                 schedule.getNotes(),
                 waypoints,
                 containerCodes,
-                shipIds // Ensure this line is included
+                shipIds,
+                scheduleSegments
         );
     }
 

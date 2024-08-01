@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-//@Profile("data-load")
+@Profile("data-load")
 //@EnableJpaRepositories
 @Component
 public class DataLoader implements CommandLineRunner {
@@ -84,8 +84,9 @@ public class DataLoader implements CommandLineRunner {
         // Initialize Waypoints for Route1
         Waypoint waypoint1Route1 = new Waypoint("Haiphong Port", 20.84274, 106.7726, route1);
         Waypoint waypoint2Route1 = new Waypoint("Singapore Port", 1.3521, 103.8198, route1);
+        Waypoint waypoint3Route1 = new Waypoint("Australia Port", 2.3521, 103.8198, route1);
 
-        waypointRepository.saveAll(Arrays.asList(waypoint1Route1, waypoint2Route1));
+        waypointRepository.saveAll(Arrays.asList(waypoint1Route1, waypoint2Route1,waypoint3Route1));
 
         // Initialize Waypoints for Route2
         Waypoint waypoint1Route2 = new Waypoint("Singapore Port", 1.3521, 103.8198, route2);
@@ -104,7 +105,9 @@ public class DataLoader implements CommandLineRunner {
         // Initialize Port Locations
         PortLocation portLocation1 = new PortLocation("Haiphong Port", 20.84274, 106.7726);
         PortLocation portLocation2 = new PortLocation("Singapore Port", 1.3521, 103.8198);
-        portLocationRepository.saveAll(Arrays.asList(portLocation1, portLocation2));
+        PortLocation portLocation3 = new PortLocation("Australia Port", 1.3521, 103.8198);
+
+        portLocationRepository.saveAll(Arrays.asList(portLocation1, portLocation2,portLocation3));
 
         // Initialize Container Suppliers
         ContainerSupplier containerSupplier1 = new ContainerSupplier("Supplier A", "Address A", "123456789", "emailA@example.com", "www.supplierA.com", "Repair", null);

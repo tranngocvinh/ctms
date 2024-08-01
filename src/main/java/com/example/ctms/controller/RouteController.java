@@ -1,8 +1,10 @@
 package com.example.ctms.controller;
 
 import com.example.ctms.dto.RouteDTO;
+import com.example.ctms.entity.Route;
 import com.example.ctms.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,22 +16,26 @@ public class RouteController {
     private RouteService routeService;
 
     @GetMapping
-    public List<RouteDTO> getAllRoutes() {
-        return routeService.getAllRoutes();
+    public ResponseEntity<List<RouteDTO>> getAllRoutes() {
+        List<RouteDTO> routes = routeService.getAllRoutes();
+        return ResponseEntity.ok(routes);
     }
 
     @PostMapping
-    public RouteDTO addRoute(@RequestBody RouteDTO routeDTO) {
-        return routeService.addRoute(routeDTO);
+    public ResponseEntity<RouteDTO> createRoute(@RequestBody RouteDTO routeDTO) {
+        RouteDTO createdRoute = routeService.addRoute(routeDTO);
+        return ResponseEntity.ok(createdRoute);
     }
 
     @PutMapping("/{id}")
-    public RouteDTO updateRoute(@PathVariable Integer id, @RequestBody RouteDTO routeDTO) {
-        return routeService.updateRoute(id, routeDTO);
+    public ResponseEntity<RouteDTO> updateRoute(@PathVariable Integer id, @RequestBody RouteDTO routeDTO) {
+        RouteDTO updatedRoute = routeService.updateRoute(id, routeDTO);
+        return ResponseEntity.ok(updatedRoute);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteRoute(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteRoute(@PathVariable Integer id) {
         routeService.deleteRoute(id);
+        return ResponseEntity.noContent().build();
     }
 }

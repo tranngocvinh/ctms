@@ -29,6 +29,9 @@ public class Route {
     private List<Waypoint> waypoints;
 
     @OneToMany(mappedBy = "route", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RouteSegment> routeSegments;
+
+    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedules;
 
     public Route() {
@@ -43,6 +46,15 @@ public class Route {
     }
 
 // Getters and Setters
+
+
+    public List<RouteSegment> getRouteSegments() {
+        return routeSegments;
+    }
+
+    public void setRouteSegments(List<RouteSegment> routeSegments) {
+        this.routeSegments = routeSegments;
+    }
 
     public Integer getId() {
         return id;

@@ -1,13 +1,17 @@
 package com.example.ctms.controller;
 
 import com.example.ctms.dto.ContainerDTO;
+import com.example.ctms.dto.EmptyContainerDTO;
 import com.example.ctms.dto.EmptyContainerRequestDto;
+import com.example.ctms.entity.EmptyContainer;
 import com.example.ctms.service.ContainerService;
+import com.example.ctms.service.ContainerSizeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/containers")
@@ -42,15 +46,25 @@ public class ContainerController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/allocate/ship")
+    public List<EmptyContainerDTO> GetAllEmptyContainers() {
+        return containerService.getAllEmptyContainer() ;
+    }
+
+    @GetMapping("/allocate/ship/{id}")
+    public Optional<EmptyContainerDTO> GetAllEmptyContainerById(@PathVariable int id) {
+        return containerService.getAllEmptyContainerById(id) ;
+    }
     @PostMapping("/allocate/ship")
     public ResponseEntity<Void> allocateEmptyContainersToShip(@RequestBody EmptyContainerRequestDto request) {
         containerService.allocateEmptyContainersToShip(request);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/allocate/port")
-    public ResponseEntity<Void> allocateEmptyContainersToPort(@RequestParam int numberOfContainers, @RequestParam String portName) {
-        containerService.allocateEmptyContainersToPort(numberOfContainers, portName);
-        return ResponseEntity.ok().build();
+    @PutMapping("/allocate/ship/approved/{id}")
+    public void isApproved(@PathVariable int id){
+         containerService.isApproved(id) ;
     }
+
+
 }

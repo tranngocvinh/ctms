@@ -9,5 +9,6 @@ public record RouteDTO(
         Double distance,
         String status,
         String description,
-        List<WaypointDTO> waypoints) {
+        List<WaypointDTO> waypoints,
+        List<RouteSegmentDTO> routeSegments) {
 }

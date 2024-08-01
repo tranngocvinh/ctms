@@ -1,9 +1,6 @@
 package com.example.ctms.mapper;
 
-import com.example.ctms.dto.ShipDTO;
-import com.example.ctms.dto.ScheduleDTO;
-import com.example.ctms.dto.ShipScheduleDTO;
-import com.example.ctms.dto.WaypointDTO;
+import com.example.ctms.dto.*;
 import com.example.ctms.entity.ShipSchedule;
 import org.springframework.stereotype.Component;
 
@@ -47,6 +44,13 @@ public class ShipScheduleMapper {
                         .collect(Collectors.toList()),
                 shipSchedule.getSchedule().getShipSchedules().stream()
                         .map(ss -> ss.getShip().getId())
+                        .collect(Collectors.toList()),
+                shipSchedule.getSchedule().getScheduleSegments().stream()
+                        .map(scheduleSegments -> new ScheduleSegmentDTO(
+                                scheduleSegments.getId(),
+                                scheduleSegments.getDepartureTime(),
+                                scheduleSegments.getArrivalTime()
+                        ))
                         .collect(Collectors.toList())
         );
 

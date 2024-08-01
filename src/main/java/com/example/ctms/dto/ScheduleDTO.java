@@ -15,9 +15,6 @@ public record ScheduleDTO(
         String notes,
         List<WaypointDTO> waypoints,
         List<String> containerCodes,
-        List<Integer> ships
-) {
-    public ScheduleDTO {
-        ships = (ships == null) ? List.of() : ships;
-    }
+        List<Integer> ships,
+        List<ScheduleSegmentDTO> scheduleSegments) {
 }

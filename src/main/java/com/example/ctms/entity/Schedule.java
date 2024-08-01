@@ -38,6 +38,9 @@ public class Schedule {
     @OneToMany(mappedBy = "schedule", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private List<ShipSchedule> shipSchedules = new ArrayList<>() ;
 
+    @OneToMany(mappedBy = "schedule", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    private List<ScheduleSegment> scheduleSegments = new ArrayList<>();
+
     public Schedule() {}
 
     public Schedule(Route route, LocalDateTime departureTime, LocalDateTime estimatedArrivalTime, LocalDateTime actualDepartureTime, LocalDateTime actualArrivalTime, String status, String notes) {
@@ -51,6 +54,15 @@ public class Schedule {
     }
 
     // Getters and Setters
+
+
+    public List<ScheduleSegment> getScheduleSegments() {
+        return scheduleSegments;
+    }
+
+    public void setScheduleSegments(List<ScheduleSegment> scheduleSegments) {
+        this.scheduleSegments = scheduleSegments;
+    }
 
     public Integer getId() {
         return id;
@@ -124,9 +136,8 @@ public class Schedule {
         this.shipSchedules = shipSchedules;
     }
 
-    public void addShipSchedule(ShipSchedule shipSchedule){
-        if(!shipSchedules.contains(shipSchedule)){
-            shipSchedule.setSchedule(this); // Ensure the schedule reference is set
+    public void addShipSchedule(ShipSchedule shipSchedule) {
+        if (!shipSchedules.contains(shipSchedule)) {
             shipSchedules.add(shipSchedule);
         }
     }

@@ -7,7 +7,7 @@ public class EmptyContainerRequestDto {
     private double totalCapacity;
     private Integer shipId;
     private LocalDateTime requestTime;
-    private String portName;
+    private Integer portId;
     private List<ContainerDetailDto> details;
 
     // Getters and Setters
@@ -36,12 +36,12 @@ public class EmptyContainerRequestDto {
         this.requestTime = requestTime;
     }
 
-    public String getPortName() {
-        return portName;
+    public Integer getPortId() {
+        return portId;
     }
 
-    public void setPortName(String portName) {
-        this.portName = portName;
+    public void setPortId(Integer portId) {
+        this.portId = portId;
     }
 
     public List<ContainerDetailDto> getDetails() {
