@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "ship_schedule", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"container_code", "schedule_id"}),
-        @UniqueConstraint(columnNames = "schedule_id")
+
 })
 public class ShipSchedule {
 

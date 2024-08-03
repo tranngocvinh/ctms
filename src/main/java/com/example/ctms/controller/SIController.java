@@ -1,6 +1,7 @@
 package com.example.ctms.controller;
 
 import com.example.ctms.dto.SIDTO;
+import com.example.ctms.entity.CargoType;
 import com.example.ctms.entity.SI;
 import com.example.ctms.service.SIService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,11 @@ public class SIController {
     @GetMapping
     public List<SIDTO> getAllSIs() {
         return siService.getAllSIs();
+    }
+
+    @GetMapping("/cargo")
+    public List<CargoType> getAllCargo() {
+        return siService.getAllCargo();
     }
 
     @GetMapping("/{id}")

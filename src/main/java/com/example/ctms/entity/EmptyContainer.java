@@ -1,7 +1,6 @@
 package com.example.ctms.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,6 +18,9 @@ public class EmptyContainer {
     @Column(nullable = false)
     private LocalDateTime requestTime;
 
+    @Column
+    private LocalDateTime approvalDate;  // Thêm trường này
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "port_id")
     private PortLocation portLocation;
@@ -33,32 +35,32 @@ public class EmptyContainer {
     @Column(nullable = false)
     private int isApproved;
 
+    @Column(nullable = true)
+    private boolean si;
+
     @OneToMany(mappedBy = "emptyContainer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EmptyContainerDetail> details;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
-    // Constructors, Getters, and Setters
+
+
 
     public EmptyContainer() {}
 
-    public EmptyContainer(int numberOfContainers, LocalDateTime requestTime, PortLocation portLocation, Ship ship, boolean fulfilled,int isApproved) {
+    public EmptyContainer(int numberOfContainers, LocalDateTime requestTime, LocalDateTime approvalDate, PortLocation portLocation, Ship ship, boolean fulfilled, int isApproved) {
         this.numberOfContainers = numberOfContainers;
         this.requestTime = requestTime;
+        this.approvalDate = approvalDate;
         this.portLocation = portLocation;
         this.ship = ship;
         this.fulfilled = fulfilled;
         this.isApproved = isApproved;
     }
 
-    public int getIsApproved() {
-        return isApproved;
-    }
+    // Getters and Setters
 
-    public void setIsApproved(int isApproved) {
-        this.isApproved = isApproved;
-    }
 
     public Integer getId() {
         return id;
@@ -84,12 +86,12 @@ public class EmptyContainer {
         this.requestTime = requestTime;
     }
 
-    public PortLocation getPortLocation() {
-        return portLocation;
+    public LocalDateTime getApprovalDate() {
+        return approvalDate;
     }
 
-    public void setPortLocation(PortLocation portLocation) {
-        this.portLocation = portLocation;
+    public void setApprovalDate(LocalDateTime approvalDate) {
+        this.approvalDate = approvalDate;
     }
 
     public Ship getShip() {
@@ -100,12 +102,28 @@ public class EmptyContainer {
         this.ship = ship;
     }
 
+    public PortLocation getPortLocation() {
+        return portLocation;
+    }
+
+    public void setPortLocation(PortLocation portLocation) {
+        this.portLocation = portLocation;
+    }
+
     public boolean isFulfilled() {
         return fulfilled;
     }
 
     public void setFulfilled(boolean fulfilled) {
         this.fulfilled = fulfilled;
+    }
+
+    public int getIsApproved() {
+        return isApproved;
+    }
+
+    public void setIsApproved(int isApproved) {
+        this.isApproved = isApproved;
     }
 
     public List<EmptyContainerDetail> getDetails() {
@@ -122,5 +140,13 @@ public class EmptyContainer {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+
+    public boolean isSi() {
+        return si;
+    }
+
+    public void setSi(boolean si) {
+        this.si = si;
     }
 }

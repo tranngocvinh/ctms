@@ -15,7 +15,8 @@ public record EmptyContainerDTO(
         Ship ship,
         int isApproved,
         List<EmptyContainerDetailDTO> details,
-        Customer customer
+        Customer customer,
+        boolean si
 
 ) {
 

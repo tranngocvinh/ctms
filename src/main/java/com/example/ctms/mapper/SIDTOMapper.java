@@ -11,6 +11,7 @@ public class SIDTOMapper implements Function<SI, SIDTO> {
     @Override
     public SIDTO apply(SI si) {
         return new SIDTO(
+                si.getId(),
                 si.getEmptyContainer().getId(),
                 si.getCargoType().getId(),
                 si.getCargoWeight(),

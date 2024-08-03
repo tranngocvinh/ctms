@@ -44,6 +44,7 @@ public class CustomerService {
     public void addCustomer(CustomerRegistrationRequest request) {
         Customer customer = new Customer();
         customer.setName(request.name());
+        customer.setRoles(List.of("ADMIN"));
         customer.setEmail(request.email());
         customer.setPassword(passwordEncoder.encode(request.password()));
         customerRepository.save(customer);

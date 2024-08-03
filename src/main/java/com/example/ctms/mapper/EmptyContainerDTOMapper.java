@@ -34,7 +34,8 @@ public class EmptyContainerDTOMapper implements Function<EmptyContainer, EmptyCo
                 emptyContainer.getShip(),
                 emptyContainer.getIsApproved(),
                 details,
-                emptyContainer.getCustomer()
+                emptyContainer.getCustomer(),
+                emptyContainer.isSi()
         );
     }
 }

@@ -160,13 +160,16 @@ public class ContainerService {
         }
 
         int isApproved = 0;
+        LocalDateTime approvedDate = null ;
         if (customer.getRoles().stream().anyMatch(auth -> auth.equals("ADMIN"))) {
             isApproved = 1;
+            approvedDate = LocalDateTime.now() ;
         }
 
         EmptyContainer emptyContainerRequest = new EmptyContainer(
                 (int) request.getTotalCapacity(),
                 request.getRequestTime() != null ? request.getRequestTime() : LocalDateTime.now(),
+                approvedDate,
                 portLocation,
                 ship,
                 false,
@@ -189,6 +192,7 @@ public class ContainerService {
         }
 
         emptyContainerRequest.setFulfilled(true);
+        emptyContainerRequest.setSi(false);
         emptyContainerRepository.save(emptyContainerRequest);
     }
 
@@ -241,6 +245,7 @@ public class ContainerService {
     public void isApproved(int id) {
          EmptyContainer emptyContainerUpdate = emptyContainerRepository.getReferenceById(id) ;
          emptyContainerUpdate.setIsApproved(1);
+         emptyContainerUpdate.setApprovalDate(LocalDateTime.now());
          emptyContainerRepository.save(emptyContainerUpdate) ;
     }
 }

@@ -49,7 +49,8 @@ public class SIService {
         si.setCargoType(cargoType);
         si.setCargoWeight(siDTO.getCargoWeight());
         si.setCargoVolume(siDTO.getCargoVolume());
-
+        emptyContainer.setSi(true);
+        emptyContainerRepository.save(emptyContainer);
         return siRepository.save(si);
     }
 
@@ -73,5 +74,9 @@ public class SIService {
 
     public void deleteSI(Integer id) {
         siRepository.deleteById(id);
+    }
+
+    public List<CargoType> getAllCargo() {
+        return cargoTypeRepository.findAll();
     }
 }

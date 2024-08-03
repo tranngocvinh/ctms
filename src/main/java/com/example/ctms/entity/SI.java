@@ -1,7 +1,9 @@
 package com.example.ctms.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+
+import java.util.List;
 
 @Entity
 public class SI {
@@ -15,6 +17,7 @@ public class SI {
     private EmptyContainer emptyContainer;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cargo_type_id", nullable = false)
     private CargoType cargoType;
 
     @Column(nullable = false)
@@ -23,14 +26,18 @@ public class SI {
     @Column(nullable = false)
     private Double cargoVolume;
 
+
+
+    // Constructors, Getters, and Setters
+
+    public SI() {}
+
     public SI(EmptyContainer emptyContainer, CargoType cargoType, Double cargoWeight, Double cargoVolume) {
         this.emptyContainer = emptyContainer;
         this.cargoType = cargoType;
         this.cargoWeight = cargoWeight;
         this.cargoVolume = cargoVolume;
     }
-
-    public SI() {}
 
     public Integer getId() {
         return id;
@@ -48,20 +55,20 @@ public class SI {
         this.emptyContainer = emptyContainer;
     }
 
-    public Double getCargoWeight() {
-        return cargoWeight;
-    }
-
-    public void setCargoWeight(Double cargoWeight) {
-        this.cargoWeight = cargoWeight;
-    }
-
     public CargoType getCargoType() {
         return cargoType;
     }
 
     public void setCargoType(CargoType cargoType) {
         this.cargoType = cargoType;
+    }
+
+    public Double getCargoWeight() {
+        return cargoWeight;
+    }
+
+    public void setCargoWeight(Double cargoWeight) {
+        this.cargoWeight = cargoWeight;
     }
 
     public Double getCargoVolume() {
@@ -71,4 +78,6 @@ public class SI {
     public void setCargoVolume(Double cargoVolume) {
         this.cargoVolume = cargoVolume;
     }
+
+
 }
