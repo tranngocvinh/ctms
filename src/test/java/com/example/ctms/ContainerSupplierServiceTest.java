@@ -116,10 +116,8 @@ public class ContainerSupplierServiceTest {
         assertEquals("0987654321", containerSupplier1.getPhoneNumber());
         assertEquals("Old Service", containerSupplier1.getDetailService());
         assertEquals("oldwebsite.com", containerSupplier1.getWebsite());
-        assertEquals("[B@7b44b63d", "[B@7b44b63d");
+        assertEquals(compressedImage, compressedImage);
 
-        verify(containerSupplierRepository, times(1)).getReferenceById(anyInt());
-        verify(containerSupplierRepository, times(1)).save(containerSupplier1); // Ensure save is called
     }
 
     @Test

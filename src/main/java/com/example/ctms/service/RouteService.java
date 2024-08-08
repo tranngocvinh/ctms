@@ -63,6 +63,7 @@ public class RouteService {
         route.setStatus(routeDTO.status());
         route.setDescription(routeDTO.description());
 
+
         // Update waypoints
         route.getWaypoints().clear();
         route.getWaypoints().addAll(routeDTO.waypoints().stream().map(dto -> new Waypoint(dto.portName(), dto.lat(), dto.lon(), route)).collect(Collectors.toList()));

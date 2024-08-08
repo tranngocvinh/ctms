@@ -22,8 +22,7 @@ public class Waypoint {
     @JoinColumn(name = "route_id", nullable = false)
     private Route route;
 
-    public Waypoint() {
-    }
+
 
     public Waypoint(String portName, Double lat, Double lon, Route route) {
         this.portName = portName;

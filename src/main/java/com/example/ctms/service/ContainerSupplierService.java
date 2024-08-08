@@ -27,9 +27,6 @@ public class ContainerSupplierService {
 
     }
 
-
-
-
     public byte[] getCustomerById(Integer id) {
         Optional<ContainerSupplier> dbImageData = containerSupplierRepository.findById(id);
         byte[] images= ImageUtils.decompressImage(dbImageData.get().getImageData());
