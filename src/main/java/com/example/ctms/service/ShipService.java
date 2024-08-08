@@ -55,7 +55,7 @@ public class ShipService {
         shipRepository.deleteById(id);
     }
 
-    private ShipDTO convertToDto(Ship ship) {
+    public ShipDTO convertToDto(Ship ship) {
         return new ShipDTO(
                 ship.getId(),
                 ship.getName(),

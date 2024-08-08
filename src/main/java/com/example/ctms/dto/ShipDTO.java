@@ -8,4 +8,7 @@ public record ShipDTO(
         String registrationNumber,
         Integer yearBuilt,
         String status
-) {}
+) {
+
+
+}
