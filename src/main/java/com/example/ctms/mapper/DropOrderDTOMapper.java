@@ -12,6 +12,7 @@ public class DropOrderDTOMapper implements Function<DropOrder, DropOrderDTO> {
     @Override
     public DropOrderDTO apply(DropOrder dropOrder) {
         return new DropOrderDTO(
+                dropOrder.getId(),
                 dropOrder.getSi().getId(),
                 dropOrder.getDropDate(),
                 dropOrder.getDropLocation(),

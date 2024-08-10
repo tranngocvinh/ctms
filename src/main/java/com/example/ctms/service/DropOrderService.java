@@ -56,14 +56,27 @@ public class DropOrderService {
         return dropOrderRepository.save(dropOrder);
     }
 
-    public DropOrder updateDropOrder(Integer id, DropOrder dropOrderDetails) {
-        DropOrder dropOrder = dropOrderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("DropOrder not found"));
+    public DropOrder updateDropOrder(Integer id, DropOrderDTO dropOrderDTO) {
+        double detFee = 0;
 
-        dropOrder.setDropDate(dropOrderDetails.getDropDate());
-        dropOrder.setDropLocation(dropOrderDetails.getDropLocation());
-        dropOrder.setStatus(dropOrderDetails.getStatus());
-        dropOrder.setDetFee(dropOrderDetails.getDetFee());
+        DropOrder dropOrder = dropOrderRepository.findDropOrderBySiId(id)
+                .orElseThrow(() -> new RuntimeException("DropOrder not found"));
+        SI si = siRepository.findById(id).
+                orElseThrow(() -> new RuntimeException("si not found"));
+        LocalDateTime emptyContainerApprovalDate = si.getEmptyContainer().getApprovalDate();
+
+        // Calculate DET fee if drop date is more than 3 days after the empty container approval date
+        if (dropOrderDTO.dropDate() != null && emptyContainerApprovalDate != null) {
+            long daysBetween = Duration.between(emptyContainerApprovalDate, dropOrderDTO.dropDate()).toDays();
+            if (daysBetween > 3) {
+                detFee = (daysBetween - 3) * DET_FEE_PER_DAY;
+
+            }
+        }
+        dropOrder.setDropDate(dropOrderDTO.dropDate());
+        dropOrder.setDropLocation(dropOrderDTO.dropLocation());
+        dropOrder.setStatus(dropOrderDTO.status());
+        dropOrder.setDetFee(detFee);
         dropOrder.setUpdatedAt(LocalDateTime.now());
 
         return dropOrderRepository.save(dropOrder);

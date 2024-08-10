@@ -12,6 +12,9 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(length = 1000)
+    private String codeSchedule;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "route_id", nullable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "schedules"})
@@ -23,17 +26,6 @@ public class Schedule {
     @Column
     private LocalDateTime estimatedArrivalTime;
 
-    @Column
-    private LocalDateTime actualDepartureTime;
-
-    @Column
-    private LocalDateTime actualArrivalTime;
-
-    @Column(nullable = false)
-    private String status;
-
-    @Column(length = 1000)
-    private String notes;
 
     @OneToMany(mappedBy = "schedule", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private List<ShipSchedule> shipSchedules = new ArrayList<>() ;
@@ -41,16 +33,16 @@ public class Schedule {
     @OneToMany(mappedBy = "schedule", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private List<ScheduleSegment> scheduleSegments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DeliveryOrder> deliveryOrders = new ArrayList<>();
+
     public Schedule() {}
 
-    public Schedule(Route route, LocalDateTime departureTime, LocalDateTime estimatedArrivalTime, LocalDateTime actualDepartureTime, LocalDateTime actualArrivalTime, String status, String notes) {
+    public Schedule(String codeSchedule, Route route, LocalDateTime departureTime, LocalDateTime estimatedArrivalTime) {
         this.route = route;
         this.departureTime = departureTime;
         this.estimatedArrivalTime = estimatedArrivalTime;
-        this.actualDepartureTime = actualDepartureTime;
-        this.actualArrivalTime = actualArrivalTime;
-        this.status = status;
-        this.notes = notes;
+        this.codeSchedule = codeSchedule;
     }
 
     // Getters and Setters
@@ -96,36 +88,12 @@ public class Schedule {
         this.estimatedArrivalTime = estimatedArrivalTime;
     }
 
-    public LocalDateTime getActualArrivalTime() {
-        return actualArrivalTime;
+    public String getCodeSchedule() {
+        return codeSchedule;
     }
 
-    public void setActualArrivalTime(LocalDateTime actualArrivalTime) {
-        this.actualArrivalTime = actualArrivalTime;
-    }
-
-    public LocalDateTime getActualDepartureTime() {
-        return actualDepartureTime;
-    }
-
-    public void setActualDepartureTime(LocalDateTime actualDepartureTime) {
-        this.actualDepartureTime = actualDepartureTime;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
+    public void setCodeSchedule(String codeSchedule) {
+        this.codeSchedule = codeSchedule;
     }
 
     public List<ShipSchedule> getShipSchedules() {
@@ -140,5 +108,13 @@ public class Schedule {
         if (!shipSchedules.contains(shipSchedule)) {
             shipSchedules.add(shipSchedule);
         }
+    }
+
+    public List<DeliveryOrder> getDeliveryOrders() {
+        return deliveryOrders;
+    }
+
+    public void setDeliveryOrders(List<DeliveryOrder> deliveryOrders) {
+        this.deliveryOrders = deliveryOrders;
     }
 }

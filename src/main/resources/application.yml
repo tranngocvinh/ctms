@@ -22,6 +22,13 @@ spring:
       enabled: true
   main:
     allow-bean-definition-overriding: true
+
+  graphql:
+    cors:
+      allowed-headers: "*"
+      allow-credentials: true
+      allowed-origins: "*"
+      allowed-methods: "*"
   jackson:
     serialization:
       fail-on-empty-beans: false

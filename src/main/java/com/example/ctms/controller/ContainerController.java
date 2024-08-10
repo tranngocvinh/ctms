@@ -35,10 +35,10 @@ public class ContainerController {
         return ResponseEntity.ok(containerService.addContainer(containerDTO));
     }
 
-//    @PutMapping("/{containerCode}")
-//    public ResponseEntity<ContainerDTO> updateContainer(@PathVariable String containerCode, @RequestBody ContainerDTO containerDTO) {
-//        return ResponseEntity.ok(containerService.updateContainer(containerCode, containerDTO));
-//    }
+    @PutMapping("/{containerCode}")
+    public ResponseEntity<ContainerDTO> updateContainer(@PathVariable String containerCode, @RequestBody ContainerDTO containerDTO) {
+        return ResponseEntity.ok(containerService.updateContainer(containerCode, containerDTO));
+    }
 
     @DeleteMapping("/{containerCode}")
     public ResponseEntity<Void> deleteContainer(@PathVariable String containerCode) {
@@ -49,6 +49,11 @@ public class ContainerController {
     @GetMapping("/allocate/ship")
     public List<EmptyContainerDTO> GetAllEmptyContainers() {
         return containerService.getAllEmptyContainer() ;
+    }
+
+    @GetMapping("/allocate/ship/isApprove")
+    public List<EmptyContainerDTO> GetAllEmptyContainersIsApprove() {
+        return containerService.getAllEmptyContainerIsApprove() ;
     }
 
     @GetMapping("/allocate/ship/{id}")

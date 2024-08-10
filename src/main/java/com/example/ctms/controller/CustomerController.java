@@ -34,10 +34,28 @@ public class CustomerController {
         return customerService.getCustomer(customerId);
     }
 
-    @PostMapping
+    @PostMapping("/admin")
+    public ResponseEntity<?> registerAdmin(@RequestBody CustomerRegistrationRequest request) {
+        customerService.addAdmin(request);
+        String jwtToken = jwtUtil.issueToken(request.email(), "ADMIN");
+        return ResponseEntity.ok()
+                .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                .build();
+    }
+
+    @PostMapping("/customer")
     public ResponseEntity<?> registerCustomer(@RequestBody CustomerRegistrationRequest request) {
         customerService.addCustomer(request);
-        String jwtToken = jwtUtil.issueToken(request.email(), "ADMIN");
+        String jwtToken = jwtUtil.issueToken(request.email(), "CUSTOMER");
+        return ResponseEntity.ok()
+                .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                .build();
+    }
+
+    @PostMapping("/ship")
+    public ResponseEntity<?> registerShip(@RequestBody CustomerRegistrationRequest request) {
+        customerService.addShip(request);
+        String jwtToken = jwtUtil.issueToken(request.email(), "SHIP");
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, jwtToken)
                 .build();

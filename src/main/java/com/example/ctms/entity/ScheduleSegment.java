@@ -14,6 +14,10 @@ public class ScheduleSegment {
     private Schedule schedule;
 
     @ManyToOne
+    @JoinColumn(name = "ship_id" , nullable = false)
+    private Ship ship;
+
+    @ManyToOne
     @JoinColumn(name = "route_segment_id", nullable = false)
     private RouteSegment routeSegment;
 
@@ -25,11 +29,12 @@ public class ScheduleSegment {
 
     public ScheduleSegment(){} ;
 
-    public ScheduleSegment(Schedule schedule, RouteSegment routeSegment, LocalDateTime departureTime, LocalDateTime arrivalTime) {
+    public ScheduleSegment(Schedule schedule, RouteSegment routeSegment, LocalDateTime departureTime, LocalDateTime arrivalTime, Ship ship) {
         this.schedule = schedule;
         this.routeSegment = routeSegment;
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
+        this.ship = ship;
     }
 
     public Integer getId() {
@@ -70,5 +75,13 @@ public class ScheduleSegment {
 
     public void setArrivalTime(LocalDateTime arrivalTime) {
         this.arrivalTime = arrivalTime;
+    }
+
+    public Ship getShip() {
+        return ship;
+    }
+
+    public void setShip(Ship ship) {
+        this.ship = ship;
     }
 }

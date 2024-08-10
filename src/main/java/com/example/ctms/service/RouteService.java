@@ -12,6 +12,7 @@ import com.example.ctms.repository.RouteSegmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,26 +35,32 @@ public class RouteService {
         Route route = convertToEntity(routeDTO);
         Route savedRoute = routeRepository.save(route);
 
-        List<RouteSegment> routeSegments = routeDTO.routeSegments().stream()
-                .map(segmentDTO -> {
-                    RouteSegment routeSegment = new RouteSegment();
-                    Waypoint startWaypoint = waypointRepository.findById(segmentDTO.startWaypointId())
-                            .orElseThrow(() -> new RuntimeException("Start waypoint not found"));
-                    Waypoint endWaypoint = waypointRepository.findById(segmentDTO.endWaypointId())
-                            .orElseThrow(() -> new RuntimeException("End waypoint not found"));
-                    routeSegment.setStartWaypoint(startWaypoint);
-                    routeSegment.setEndWaypoint(endWaypoint);
-                    routeSegment.setRoute(savedRoute);
-                    routeSegment.setSegmentOrder(segmentDTO.segmentOrder());
-                    return routeSegment;
-                })
-                .collect(Collectors.toList());
+        Waypoint waypoints = new Waypoint();
+        for(int i = 0 ; i< routeDTO.waypoints().size()  ; i++) {
+            waypoints.setPortName(routeDTO.waypoints().get(i).portName());
+            waypoints.setLat(routeDTO.waypoints().get(i).lat());
+            waypoints.setLon(routeDTO.waypoints().get(i).lon());
+            waypoints.setRoute(savedRoute);
+            waypointRepository.save(waypoints);
+        }
+
+
+        List<RouteSegment> routeSegments = new ArrayList<>();
+        for (int i = 0; i < routeDTO.waypoints().size() - 1; i++) {
+            RouteSegment routeSegment = new RouteSegment();
+            routeSegment.setStartWaypoint(route.getWaypoints().get(i));
+            routeSegment.setEndWaypoint(route.getWaypoints().get(i + 1));
+            routeSegment.setRoute(savedRoute);
+            routeSegment.setSegmentOrder(i + 1);
+            routeSegments.add(routeSegment);
+        }
 
         routeSegmentRepository.saveAll(routeSegments);
         savedRoute.setRouteSegments(routeSegments);
 
         return convertToDto(savedRoute);
     }
+
 
     public RouteDTO updateRoute(Integer id, RouteDTO routeDTO) {
         Route route = routeRepository.findById(id).orElseThrow(() -> new RuntimeException("Route not found"));
@@ -100,7 +107,7 @@ public class RouteService {
                 .collect(Collectors.toList());
 
         List<RouteSegmentDTO> routeSegmentDTOS = route.getRouteSegments().stream()
-                .map(segment -> new RouteSegmentDTO(segment.getStartWaypoint().getId(), segment.getEndWaypoint().getId(), segment.getSegmentOrder()))
+                .map(segment -> new RouteSegmentDTO(segment.getId(),segment.getStartWaypoint().getId(), segment.getEndWaypoint().getId(), segment.getSegmentOrder()))
                 .collect(Collectors.toList());
 
         return new RouteDTO(route.getId(), route.getName(), route.getEstimatedTime(), route.getDistance(), route.getStatus(), route.getDescription(), waypointDTOS, routeSegmentDTOS);

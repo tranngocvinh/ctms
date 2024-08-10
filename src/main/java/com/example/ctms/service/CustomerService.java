@@ -41,10 +41,28 @@ public class CustomerService {
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
     }
 
-    public void addCustomer(CustomerRegistrationRequest request) {
+    public void addAdmin(CustomerRegistrationRequest request) {
         Customer customer = new Customer();
         customer.setName(request.name());
         customer.setRoles(List.of("ADMIN"));
+        customer.setEmail(request.email());
+        customer.setPassword(passwordEncoder.encode(request.password()));
+        customerRepository.save(customer);
+    }
+
+    public void addCustomer(CustomerRegistrationRequest request) {
+        Customer customer = new Customer();
+        customer.setName(request.name());
+        customer.setRoles(List.of("CUSTOMER"));
+        customer.setEmail(request.email());
+        customer.setPassword(passwordEncoder.encode(request.password()));
+        customerRepository.save(customer);
+    }
+
+    public void addShip(CustomerRegistrationRequest request) {
+        Customer customer = new Customer();
+        customer.setName(request.name());
+        customer.setRoles(List.of("SHIP"));
         customer.setEmail(request.email());
         customer.setPassword(passwordEncoder.encode(request.password()));
         customerRepository.save(customer);
@@ -72,6 +90,9 @@ public class CustomerService {
 
         return (Customer) authentication.getPrincipal();
     }
+
+
+
 }
 
 

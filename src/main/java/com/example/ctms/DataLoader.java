@@ -95,8 +95,8 @@ public class DataLoader implements CommandLineRunner {
         waypointRepository.saveAll(Arrays.asList(waypoint1Route2, waypoint2Route2));
 
         // Initialize Schedules
-        Schedule schedule1 = new Schedule(route1, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(2), null, null, "Scheduled", "First schedule");
-        Schedule schedule2 = new Schedule(route2, LocalDateTime.now().plusDays(3), LocalDateTime.now().plusDays(5), null, null, "Scheduled", "Second schedule");
+        Schedule schedule1 = new Schedule("QQ111",route1, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(2));
+        Schedule schedule2 = new Schedule("AA121",route2, LocalDateTime.now().plusDays(3), LocalDateTime.now().plusDays(5));
 
         scheduleRepository.saveAll(Arrays.asList(schedule1, schedule2));
 

@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
@@ -53,21 +54,19 @@ public class ScheduleService {
         Route route = routeRepository.findById(scheduleDTO.routeId())
                 .orElseThrow(() -> new RuntimeException("Route not found with ID: " + scheduleDTO.routeId()));
         Schedule schedule = new Schedule(
+                scheduleDTO.codeSchedule(),
                 route,
                 scheduleDTO.departureTime(),
-                scheduleDTO.estimatedArrivalTime(),
-                scheduleDTO.actualDepartureTime(),
-                scheduleDTO.actualArrivalTime(),
-                scheduleDTO.status(),
-                scheduleDTO.notes()
+                scheduleDTO.estimatedArrivalTime()
+
         );
 
         Schedule savedSchedule = scheduleRepository.save(schedule);
 
         // Create ShipSchedule entries without container
-        scheduleDTO.ships().forEach(shipId -> {
-            Ship ship = shipRepository.findById(shipId)
-                    .orElseThrow(() -> new RuntimeException("Ship not found with ID: " + shipId));
+        scheduleDTO.scheduleSegments().forEach(segmentDTO -> {
+            Ship ship = shipRepository.findById(segmentDTO.shipId())
+                    .orElseThrow(() -> new RuntimeException("Ship not found with ID: "));
             ShipSchedule newShipSchedule = new ShipSchedule(null, ship, savedSchedule);
             shipScheduleRepository.save(newShipSchedule);
         });
@@ -76,7 +75,9 @@ public class ScheduleService {
         scheduleDTO.scheduleSegments().forEach(segmentDTO -> {
             RouteSegment routeSegment = routeSegmentRepository.findById(segmentDTO.routeSegmentId())
                     .orElseThrow(() -> new RuntimeException("RouteSegment not found with ID: " + segmentDTO.routeSegmentId()));
-            ScheduleSegment scheduleSegment = new ScheduleSegment(savedSchedule, routeSegment, segmentDTO.departureTime(), segmentDTO.arrivalTime());
+            Ship ship = shipRepository.findById(segmentDTO.shipId())
+                    .orElseThrow(() -> new RuntimeException("Ship not found with ID: " + segmentDTO.shipId()));
+            ScheduleSegment scheduleSegment = new ScheduleSegment(savedSchedule, routeSegment, segmentDTO.departureTime(), segmentDTO.arrivalTime(),ship);
             scheduleSegmentRepository.save(scheduleSegment);
         });
 
@@ -93,10 +94,7 @@ public class ScheduleService {
                     schedule.setRoute(route);
                     schedule.setDepartureTime(scheduleDTO.departureTime());
                     schedule.setEstimatedArrivalTime(scheduleDTO.estimatedArrivalTime());
-                    schedule.setActualDepartureTime(scheduleDTO.actualDepartureTime());
-                    schedule.setActualArrivalTime(scheduleDTO.actualArrivalTime());
-                    schedule.setStatus(scheduleDTO.status());
-                    schedule.setNotes(scheduleDTO.notes());
+                    schedule.setCodeSchedule(scheduleDTO.codeSchedule());
 
                     // Update ShipSchedule entries
                     shipScheduleRepository.deleteByScheduleId(schedule.getId());
@@ -110,9 +108,11 @@ public class ScheduleService {
                     // Update ScheduleSegment entries
                     scheduleSegmentRepository.deleteByScheduleId(schedule.getId());
                     scheduleDTO.scheduleSegments().forEach(segmentDTO -> {
+                        Ship ship = shipRepository.findById(segmentDTO.shipId())
+                                .orElseThrow(() -> new RuntimeException("Ship not found with ID: " + segmentDTO.shipId()));
                         RouteSegment routeSegment = routeSegmentRepository.findById(segmentDTO.routeSegmentId())
                                 .orElseThrow(() -> new RuntimeException("RouteSegment not found with ID: " + segmentDTO.routeSegmentId()));
-                        ScheduleSegment scheduleSegment = new ScheduleSegment(schedule, routeSegment, segmentDTO.departureTime(), segmentDTO.arrivalTime());
+                        ScheduleSegment scheduleSegment = new ScheduleSegment(schedule, routeSegment, segmentDTO.departureTime(), segmentDTO.arrivalTime(),ship);
                         scheduleSegmentRepository.save(scheduleSegment);
                     });
 
@@ -143,7 +143,7 @@ public class ScheduleService {
                 .collect(Collectors.toList());
 
         List<ScheduleSegmentDTO> scheduleSegments = scheduleSegmentRepository.findBySchedule(schedule).stream()
-                .map(segment -> new ScheduleSegmentDTO(segment.getRouteSegment().getId(), segment.getDepartureTime(), segment.getArrivalTime()))
+                .map(segment -> new ScheduleSegmentDTO(segment.getRouteSegment().getId(), segment.getDepartureTime(), segment.getArrivalTime(),segment.getShip().getId()))
                 .collect(Collectors.toList());
 
         return new ScheduleDTO(
@@ -152,10 +152,7 @@ public class ScheduleService {
                 schedule.getRoute().getName(),
                 schedule.getDepartureTime(),
                 schedule.getEstimatedArrivalTime(),
-                schedule.getActualDepartureTime(),
-                schedule.getActualArrivalTime(),
-                schedule.getStatus(),
-                schedule.getNotes(),
+                schedule.getCodeSchedule(),
                 waypoints,
                 containerCodes,
                 shipIds,

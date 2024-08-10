@@ -27,10 +27,7 @@ public class ShipScheduleMapper {
                 shipSchedule.getSchedule().getRoute().getName(),
                 shipSchedule.getSchedule().getDepartureTime(),
                 shipSchedule.getSchedule().getEstimatedArrivalTime(),
-                shipSchedule.getSchedule().getActualDepartureTime(),
-                shipSchedule.getSchedule().getActualArrivalTime(),
-                shipSchedule.getSchedule().getStatus(),
-                shipSchedule.getSchedule().getNotes(),
+                shipSchedule.getSchedule().getCodeSchedule(),
                 shipSchedule.getSchedule().getRoute().getWaypoints().stream()
                         .map(waypoint -> new WaypointDTO(
                                 waypoint.getPortName(),
@@ -49,7 +46,8 @@ public class ShipScheduleMapper {
                         .map(scheduleSegments -> new ScheduleSegmentDTO(
                                 scheduleSegments.getId(),
                                 scheduleSegments.getDepartureTime(),
-                                scheduleSegments.getArrivalTime()
+                                scheduleSegments.getArrivalTime(),
+                                scheduleSegments.getShip().getId()
                         ))
                         .collect(Collectors.toList())
         );

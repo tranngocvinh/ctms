@@ -35,8 +35,8 @@ public class DropOrderController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DropOrder> updateDropOrder(@PathVariable Integer id, @RequestBody DropOrder dropOrderDetails) {
-        DropOrder updatedDropOrder = dropOrderService.updateDropOrder(id, dropOrderDetails);
+    public ResponseEntity<DropOrder> updateDropOrder(@PathVariable Integer id, @RequestBody DropOrderDTO dropOrderDTO) {
+        DropOrder updatedDropOrder = dropOrderService.updateDropOrder(id, dropOrderDTO);
         return ResponseEntity.ok(updatedDropOrder);
     }
 

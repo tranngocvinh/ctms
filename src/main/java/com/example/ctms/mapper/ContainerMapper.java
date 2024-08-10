@@ -16,6 +16,9 @@ public interface ContainerMapper {
     @Mapping(source = "containerSupplier", target = "containerSupplier")
     @Mapping(source = "history", target = "history")
     @Mapping(source = "shipSchedules", target = "shipSchedules")
+    @Mapping(source = "customer",target = "customer")
+    @Mapping(source = "isApprove",target = "isApprove")
+    @Mapping(source = "localDateTime",target = "localDateTime")
     ContainerDTO toDTO(Container container);
 
     @Mapping(source = "containerSize", target = "containerSize")

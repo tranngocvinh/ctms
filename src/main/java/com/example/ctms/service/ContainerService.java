@@ -121,8 +121,13 @@ public class ContainerService {
         PortLocation portLocation = portLocationRepository.findById(containerDTO.portLocation().getId())
                 .orElseThrow(() -> new RuntimeException("PortLocation not found"));
 
-        ContainerSupplier containerSupplier = containerSupplierRepository.findById(containerDTO.containerSupplier().id())
-                .orElseThrow(() -> new RuntimeException("ContainerSupplier not found"));
+        ContainerSupplier containerSupplier;
+        if (containerDTO.containerSupplier() != null && containerDTO.containerSupplier().id() != null) {
+            containerSupplier = containerSupplierRepository.findById(containerDTO.containerSupplier().id())
+                    .orElseThrow(() -> new RuntimeException("ContainerSupplier not found"));
+        } else {
+            containerSupplier = null;
+        }
 
         Container updatedContainer = containerRepository.findByContainerCode(containerCode)
                 .map(container -> {
@@ -131,7 +136,24 @@ public class ContainerService {
                     container.setPortLocation(portLocation);
                     container.setContainerSupplier(containerSupplier);
                     container.setHasGoods(determineHasGoods(containerDTO.status()));
+                    containerDTO.shipSchedules().forEach(shipScheduleDTO -> {
+                        Ship ship = shipRepository.findById(shipScheduleDTO.ship().id())
+                                .orElseThrow(() -> new RuntimeException("Ship not found with ID: " + shipScheduleDTO.ship().id()));
+                        Schedule schedule = scheduleRepository.findById(shipScheduleDTO.schedule().id())
+                                .orElseThrow(() -> new RuntimeException("Schedule not found with ID: " + shipScheduleDTO.schedule().id()));
+
+                        List<ShipSchedule> existingShipSchedules = shipScheduleRepository.findByShipAndScheduleAndContainerIsNull(ship, schedule);
+                        if (!existingShipSchedules.isEmpty()) {
+                            ShipSchedule existingShipSchedule = existingShipSchedules.get(0);
+                            existingShipSchedule.setContainer(container);
+                            shipScheduleRepository.save(existingShipSchedule);
+                        } else {
+                            ShipSchedule newShipSchedule = new ShipSchedule(container, ship, schedule);
+                            shipScheduleRepository.save(newShipSchedule);
+                        }
+                    });
                     return containerRepository.save(container);
+
                 })
                 .orElseThrow(() -> new RuntimeException("Container not found"));
 
@@ -163,7 +185,7 @@ public class ContainerService {
         LocalDateTime approvedDate = null ;
         if (customer.getRoles().stream().anyMatch(auth -> auth.equals("ADMIN"))) {
             isApproved = 1;
-            approvedDate = LocalDateTime.now() ;
+           approvedDate = LocalDateTime.now() ;
         }
 
         EmptyContainer emptyContainerRequest = new EmptyContainer(
@@ -194,8 +216,34 @@ public class ContainerService {
         emptyContainerRequest.setFulfilled(true);
         emptyContainerRequest.setSi(false);
         emptyContainerRepository.save(emptyContainerRequest);
+        if(isApproved == 1) {
+            autoGenerateContainer(request,customer);
+        }
     }
 
+    private void autoGenerateContainer(EmptyContainerRequestDto request, Customer customer) {
+
+        PortLocation portLocation = portLocationRepository.findById(request.getPortId())
+                    .orElseThrow(() -> new RuntimeException("PortLocation not found"));
+
+        Container container = new Container() ;
+        container.setPortLocation(portLocation);
+        container.setStatus("In Port");
+        container.setHasGoods(true);
+        container.setCustomer(customer);
+        container.setLocalDateTime(LocalDateTime.now());
+        for( int i = 0 ; i < request.getDetails().size() ; i++){
+            ContainerSize containerSize = containerSizeRepository.findById(request.getDetails().get(0).getContainerSizeId())
+                    .orElseThrow(() -> new RuntimeException("ContainerSize not found"));
+            container.setContainerSize(containerSize);
+            for(int j = 0 ; j < request.getDetails().get(i).getQuantity(); j++) {
+                container.setContainerCode(generateContainerCode()) ;
+                containerRepository.save(container);
+            }
+
+        }
+
+    }
 
 
 //    @Transactional
@@ -247,5 +295,10 @@ public class ContainerService {
          emptyContainerUpdate.setIsApproved(1);
          emptyContainerUpdate.setApprovalDate(LocalDateTime.now());
          emptyContainerRepository.save(emptyContainerUpdate) ;
+    }
+
+    public List<EmptyContainerDTO> getAllEmptyContainerIsApprove() {
+        return  emptyContainerRepository.findByIsApprovedEquals(1).stream().map(emptyContainerDTOMapper).toList() ;
+
     }
 }

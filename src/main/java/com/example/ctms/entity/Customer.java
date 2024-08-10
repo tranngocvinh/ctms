@@ -16,12 +16,11 @@ public class Customer implements UserDetails {
     private Integer id;
 
     private String name;
+    @Column(unique=true)
     private String email;
     private String password;
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EmptyContainer> emptyContainers;
+
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "customer_id"))

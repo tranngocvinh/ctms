@@ -2,6 +2,8 @@ package com.example.ctms.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,11 +32,25 @@ public class Container {
     @Column(nullable = false)
     private boolean hasGoods;
 
+    @Column(nullable = true)
+    private int isApprove ;
+
+    @Column(nullable = true)
+    private LocalDateTime localDateTime ;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
     @OneToMany(mappedBy = "container", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ContainerHistory> history = new ArrayList<>();
 
     @OneToMany(mappedBy = "container", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShipSchedule> shipSchedules = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "delivery_order_id")
+    private DeliveryOrder deliveryOrder;
 
 
     // Getters and Setters
@@ -47,10 +63,8 @@ public class Container {
         this.portLocation = portLocation;
         this.containerSupplier = containerSupplier;
         this.hasGoods = hasGoods;
+
     }
-
-    // Getters and setters omitted for brevity
-
 
     public String getContainerCode() {
         return containerCode;
@@ -100,6 +114,31 @@ public class Container {
         this.hasGoods = hasGoods;
     }
 
+    public LocalDateTime getLocalDateTime() {
+        return localDateTime;
+    }
+
+    public void setLocalDateTime(LocalDateTime localDateTime) {
+        this.localDateTime = localDateTime;
+    }
+
+
+    public int getIsApprove() {
+        return isApprove;
+    }
+
+    public void setIsApprove(int isApprove) {
+        this.isApprove = isApprove;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
     public List<ContainerHistory> getHistory() {
         return history;
     }
@@ -114,6 +153,14 @@ public class Container {
 
     public void setShipSchedules(List<ShipSchedule> shipSchedules) {
         this.shipSchedules = shipSchedules;
+    }
+
+    public DeliveryOrder getDeliveryOrder() {
+        return deliveryOrder;
+    }
+
+    public void setDeliveryOrder(DeliveryOrder deliveryOrder) {
+        this.deliveryOrder = deliveryOrder;
     }
 
     public void addShipSchedule(ShipSchedule shipSchedule) {
