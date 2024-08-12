@@ -7,6 +7,7 @@ public record DropOrderDTO (
         Integer si,
         LocalDateTime dropDate,
         String dropLocation,
-        String status
+        String status,
+        Double detFee
 ){
 }

@@ -15,7 +15,7 @@ public record ContainerDTO(
         ContainerSupplierDTO containerSupplier,
         boolean hasGoods,
         List<ContainerHistoryDTO> history,
-        List<ShipScheduleDTO> shipSchedules,
+        ShipScheduleDTO shipSchedule,
         Customer customer,
         int isApprove,
         LocalDateTime localDateTime

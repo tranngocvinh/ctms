@@ -15,17 +15,16 @@ public interface ContainerMapper {
     @Mapping(source = "portLocation", target = "portLocation")
     @Mapping(source = "containerSupplier", target = "containerSupplier")
     @Mapping(source = "history", target = "history")
-    @Mapping(source = "shipSchedules", target = "shipSchedules")
     @Mapping(source = "customer",target = "customer")
     @Mapping(source = "isApprove",target = "isApprove")
     @Mapping(source = "localDateTime",target = "localDateTime")
+    @Mapping(source ="shipSchedule" , target = "shipSchedule")
     ContainerDTO toDTO(Container container);
 
     @Mapping(source = "containerSize", target = "containerSize")
     @Mapping(source = "portLocation", target = "portLocation")
     @Mapping(source = "containerSupplier", target = "containerSupplier")
     @Mapping(source = "history", target = "history")
-    @Mapping(source = "shipSchedules", target = "shipSchedules")
     Container toEntity(ContainerDTO containerDTO);
 
     @Mapping(source = "containerType", target = "containerType")
@@ -42,10 +41,10 @@ public interface ContainerMapper {
 
     ContainerHistory toContainerHistory(ContainerHistoryDTO containerHistoryDTO);
 
-    @Mapping(source = "id", target = "id")
+
     ShipScheduleDTO toShipScheduleDTO(ShipSchedule shipSchedule);
 
-    @Mapping(source = "id", target = "id")
+
     ShipSchedule toShipSchedule(ShipScheduleDTO shipScheduleDTO);
 
     ShipDTO toShipDTO(Ship ship);

@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class DeliveryOrderService {
     private final DeliveryOrderRepository deliveryOrderRepository;
+    private final ShipScheduleRepository shipScheduleRepository ;
     private final CustomerRepository customerRepository;
     private final ScheduleRepository scheduleRepository;
     private final ContainerRepository containerRepository;
@@ -19,8 +21,9 @@ public class DeliveryOrderService {
     private DeliveryOrderDTOMapper deliveryOrderDTOMapper;
 
     @Autowired
-    public DeliveryOrderService(DeliveryOrderRepository deliveryOrderRepository, CustomerRepository customerRepository, ScheduleRepository scheduleRepository, DeliveryOrderDTOMapper deliveryOrderDTOMapper, ContainerRepository containerRepository, ShipRepository shipRepository) {
+    public DeliveryOrderService(DeliveryOrderRepository deliveryOrderRepository, ShipScheduleRepository shipScheduleRepository, CustomerRepository customerRepository, ScheduleRepository scheduleRepository, DeliveryOrderDTOMapper deliveryOrderDTOMapper, ContainerRepository containerRepository, ShipRepository shipRepository) {
         this.deliveryOrderRepository = deliveryOrderRepository;
+        this.shipScheduleRepository = shipScheduleRepository;
         this.customerRepository = customerRepository;
         this.scheduleRepository = scheduleRepository;
         this.deliveryOrderDTOMapper = deliveryOrderDTOMapper;
@@ -42,10 +45,12 @@ public class DeliveryOrderService {
 
     public void addDeliveryOrder(DeliveryOrderDTO deliveryOrderDTO) {
 
-        Customer customer  = customerRepository.findById(deliveryOrderDTO.customerId())
-                .orElseThrow(() -> new RuntimeException("ko tim thay customer"));
+        Customer customer = customerRepository.findById(deliveryOrderDTO.customerId())
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
         Schedule schedule = scheduleRepository.findById(deliveryOrderDTO.scheduleId())
-                .orElseThrow(() -> new RuntimeException("Schedule not found")) ;
+                .orElseThrow(() -> new RuntimeException("Schedule not found"));
+
         DeliveryOrder deliveryOrder = new DeliveryOrder(
                 deliveryOrderDTO.orderNumber(),
                 customer,
@@ -55,23 +60,43 @@ public class DeliveryOrderService {
                 deliveryOrderDTO.totalAmount(),
                 deliveryOrderDTO.status(),
                 deliveryOrderDTO.notes()
-        ) ;
+        );
+        deliveryOrderRepository.save(deliveryOrder);
 
-        Container container = null ;
-        for (int i = 0 ; i < deliveryOrderDTO.containerCode().size() ; i++){
-             container = containerRepository.findByContainerCode(deliveryOrderDTO.containerCode().get(i))
-                    .orElseThrow(() -> new RuntimeException("container not found"));
+        // Iterate over the shipScheduleContainerMap
+        for (Map.Entry<Long, List<String>> entry : deliveryOrderDTO.shipScheduleContainerMap().entrySet()) {
+            Long shipScheduleId = entry.getKey();
+            List<String> containerCodes = entry.getValue();
 
-            container.setDeliveryOrder(deliveryOrder);
-            container.setHasGoods(true);
-            container.setStatus("In Transit");
+            // Find the corresponding ShipSchedule
+            ShipSchedule shipSchedule = shipScheduleRepository.findById(shipScheduleId)
+                    .orElseThrow(() -> new RuntimeException("ShipSchedule not found"));
 
+            // Assign containers to the ShipSchedule
+            for (String containerCode : containerCodes) {
+                Container container = containerRepository.findByContainerCode(containerCode)
+                        .orElseThrow(() -> new RuntimeException("Container not found"));
 
+                // Add the container to the ShipSchedule's container list
+                shipSchedule.getContainers().add(container);
+
+                // Set the relationship and status on the container
+                container.setDeliveryOrder(deliveryOrder);
+                container.setHasGoods(true);
+                container.setStatus("In Transit");
+
+                // Ensure the bi-directional relationship is maintained
+                container.setShipSchedule(shipSchedule);
+
+                // Save the container (and ShipSchedule if necessary)
+                containerRepository.save(container);
+            }
+// If needed, save the ShipSchedule after adding all containers (though it's often handled by cascading)
+            shipScheduleRepository.save(shipSchedule);
         }
-         deliveryOrderRepository.save(deliveryOrder) ;
-        containerRepository.save(container);
 
     }
+
 
     public void updateDeliveryOrder(Integer id, DeliveryOrderDTO deliveryOrderDTO) {
         DeliveryOrder order = deliveryOrderRepository.findById(id)

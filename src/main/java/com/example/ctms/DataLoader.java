@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
+
 @Profile("data-load")
 //@EnableJpaRepositories
 @Component
@@ -118,12 +120,13 @@ public class DataLoader implements CommandLineRunner {
         Container container1 = new Container("MSKU1234567", size20FeetNormal1, "Under Maintenance", null, null, false);
         Container container2 = new Container("TEMU7654321", size20FeetNormal1, "Under Maintenance", null, null, false);
         Container container3 = new Container("CSQU9876543", size40FeetNormal1, "Under Maintenance", null, null, false);
+        List<Container> containers1 = Arrays.asList(container1, container2);
 
-        containerRepository.saveAll(Arrays.asList(container1, container2, container3));
+        List<Container> containers2 = Arrays.asList(container3);
 
         // Initialize ShipSchedule (intermediate table) entries
-        ShipSchedule shipSchedule1 = new ShipSchedule(container1,ship1, schedule1);
-        ShipSchedule shipSchedule2 = new ShipSchedule(container2,ship2, schedule2);
+        ShipSchedule shipSchedule1 = new ShipSchedule(containers1,ship1, schedule1);
+        ShipSchedule shipSchedule2 = new ShipSchedule(containers2,ship2, schedule2);
         shipScheduleRepository.saveAll(Arrays.asList(shipSchedule1, shipSchedule2));
 // Associate ship schedules with containers
 //        container2.setShipSchedules(Arrays.asList(shipSchedule1));

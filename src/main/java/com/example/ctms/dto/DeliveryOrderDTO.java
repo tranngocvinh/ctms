@@ -2,6 +2,7 @@ package com.example.ctms.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public record DeliveryOrderDTO(
         Integer id,
@@ -13,7 +14,7 @@ public record DeliveryOrderDTO(
         String notes,
         Integer customerId, // Thay vì đối tượng Customer, chỉ sử dụng ID
         Integer scheduleId, // Thay vì đối tượng Schedule, chỉ sử dụng ID
-        List<String> containerCode
+        Map<Long, List<String>> shipScheduleContainerMap // New field for mapping shipScheduleId to container codes
 )
 {// Getters và Setters
 }

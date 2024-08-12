@@ -42,11 +42,13 @@ public class Container {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shipSchedule_id")
+    private ShipSchedule shipSchedule;
+
     @OneToMany(mappedBy = "container", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ContainerHistory> history = new ArrayList<>();
 
-    @OneToMany(mappedBy = "container", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ShipSchedule> shipSchedules = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "delivery_order_id")
@@ -147,13 +149,7 @@ public class Container {
         this.history = history;
     }
 
-    public List<ShipSchedule> getShipSchedules() {
-        return shipSchedules;
-    }
 
-    public void setShipSchedules(List<ShipSchedule> shipSchedules) {
-        this.shipSchedules = shipSchedules;
-    }
 
     public DeliveryOrder getDeliveryOrder() {
         return deliveryOrder;
@@ -163,9 +159,12 @@ public class Container {
         this.deliveryOrder = deliveryOrder;
     }
 
-    public void addShipSchedule(ShipSchedule shipSchedule) {
-        if (!shipSchedules.contains(shipSchedule)) {
-            shipSchedules.add(shipSchedule);
-        }
+
+    public ShipSchedule getShipSchedule() {
+        return shipSchedule;
+    }
+
+    public void setShipSchedule(ShipSchedule shipSchedule) {
+        this.shipSchedule = shipSchedule;
     }
 }

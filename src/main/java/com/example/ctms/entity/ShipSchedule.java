@@ -1,21 +1,16 @@
 package com.example.ctms.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+
+import java.util.List;
 
 @Entity
-@Table(name = "ship_schedule", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"container_code", "schedule_id"}),
-
-})
 public class ShipSchedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "container_code", nullable = true)
-    private Container container;
 
     @ManyToOne
     @JoinColumn(name = "ship_id", nullable = false)
@@ -25,15 +20,19 @@ public class ShipSchedule {
     @JoinColumn(name = "schedule_id", nullable = false)
     private Schedule schedule;
 
+    // If a ShipSchedule can have multiple containers, use a List to represent the one-to-many relationship
+    @OneToMany(mappedBy = "shipSchedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Container> containers;
+
     public ShipSchedule() {}
 
-    public ShipSchedule(Container container, Ship ship, Schedule schedule) {
-        this.container = container;
+    public ShipSchedule(List<Container> containers,Ship ship, Schedule schedule) {
         this.ship = ship;
+        this.containers = containers;
         this.schedule = schedule;
     }
+// Getters and setters
 
-    // Getters and setters
 
     public Long getId() {
         return id;
@@ -41,14 +40,6 @@ public class ShipSchedule {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Container getContainer() {
-        return container;
-    }
-
-    public void setContainer(Container container) {
-        this.container = container;
     }
 
     public Ship getShip() {
@@ -65,5 +56,13 @@ public class ShipSchedule {
 
     public void setSchedule(Schedule schedule) {
         this.schedule = schedule;
+    }
+
+    public List<Container> getContainers() {
+        return containers;
+    }
+
+    public void setContainers(List<Container> containers) {
+        this.containers = containers;
     }
 }

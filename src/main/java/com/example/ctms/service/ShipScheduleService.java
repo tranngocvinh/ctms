@@ -30,6 +30,12 @@ public class ShipScheduleService  {
                 .collect(Collectors.toList());
     }
 
+    public List<ShipScheduleDTO> getShipSchedulesByScheduleId(int scheduleId) {
+        return shipScheduleRepository.findByScheduleId(scheduleId)
+                .stream().map(ShipScheduleMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
     private static class ShipScheduleKey {
         private final Integer shipId;
         private final Integer scheduleId;

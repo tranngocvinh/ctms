@@ -26,7 +26,7 @@ public class DropOrderService {
     @Autowired
     private DropOrderDTOMapper dropOrderDTOMapper;
 
-    private static final double DET_FEE_PER_DAY = 100.000; // Example fee per day
+    private static final double DET_FEE_PER_DAY = 400000; // Example fee per day
 
     public List<DropOrderDTO> getAllDropOrders() {
         return dropOrderRepository.findAll().stream().map(dropOrderDTOMapper).toList();

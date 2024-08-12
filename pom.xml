@@ -114,6 +114,11 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>vn.payos</groupId>
+			<artifactId>payos-java</artifactId>
+			<version>1.0.1</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/eu.europa.ec.eurostat/jgiscotools-feature -->
 		<dependency>
 			<groupId>eu.europa.ec.eurostat</groupId>

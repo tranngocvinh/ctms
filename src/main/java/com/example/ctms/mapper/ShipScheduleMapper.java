@@ -35,8 +35,8 @@ public class ShipScheduleMapper {
                                 waypoint.getLon()
                         ))
                         .collect(Collectors.toList()),
-                shipSchedule.getSchedule().getShipSchedules().stream()
-                        .map(ss -> ss.getContainer() != null ? ss.getContainer().getContainerCode() : null)
+                shipSchedule.getContainers().stream()
+                        .map(ss -> ss.getContainerCode() != null ? ss.getContainerCode() : null)
                         .filter(containerCode -> containerCode != null)  // Only collect non-null container codes
                         .collect(Collectors.toList()),
                 shipSchedule.getSchedule().getShipSchedules().stream()

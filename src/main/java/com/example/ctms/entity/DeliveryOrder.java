@@ -41,18 +41,6 @@ public class DeliveryOrder {
     @Column(length = 1000)
     private String notes;
 
-    @OneToMany(mappedBy = "deliveryOrder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Container> containerCode;
-
-    @OneToMany(mappedBy = "deliveryOrder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DeliveryOrderDetail> deliveryOrderDetails;
-
-    @OneToMany(mappedBy = "deliveryOrder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DeliveryAddress> deliveryAddresses;
-
-    @OneToMany(mappedBy = "deliveryOrder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DeliveryStatus> deliveryStatuses;
-
     // Constructors, Getters and Setters
 
     public DeliveryOrder() {}
@@ -141,35 +129,7 @@ public class DeliveryOrder {
         this.notes = notes;
     }
 
-    public List<Container> getContainerCode() {
-        return containerCode;
-    }
 
-    public void setContainerCode(List<Container> containerCode) {
-        this.containerCode = containerCode;
-    }
 
-    public List<DeliveryOrderDetail> getDeliveryOrderDetails() {
-        return deliveryOrderDetails;
-    }
 
-    public void setDeliveryOrderDetails(List<DeliveryOrderDetail> deliveryOrderDetails) {
-        this.deliveryOrderDetails = deliveryOrderDetails;
-    }
-
-    public List<DeliveryAddress> getDeliveryAddresses() {
-        return deliveryAddresses;
-    }
-
-    public void setDeliveryAddresses(List<DeliveryAddress> deliveryAddresses) {
-        this.deliveryAddresses = deliveryAddresses;
-    }
-
-    public List<DeliveryStatus> getDeliveryStatuses() {
-        return deliveryStatuses;
-    }
-
-    public void setDeliveryStatuses(List<DeliveryStatus> deliveryStatuses) {
-        this.deliveryStatuses = deliveryStatuses;
-    }
 }

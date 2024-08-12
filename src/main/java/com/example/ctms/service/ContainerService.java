@@ -69,95 +69,96 @@ public class ContainerService {
 
     @Transactional
     public ContainerDTO addContainer(ContainerDTO containerDTO) {
-        ContainerSize containerSize = containerSizeRepository.findById(containerDTO.containerSize().id())
-                .orElseThrow(() -> new RuntimeException("ContainerSize not found"));
-
-        PortLocation portLocation = null;
-        if (containerDTO.portLocation() != null && containerDTO.portLocation().getId() != null) {
-            portLocation = portLocationRepository.findById(containerDTO.portLocation().getId())
-                    .orElseThrow(() -> new RuntimeException("PortLocation not found"));
-        }
-
-        ContainerSupplier containerSupplier = null;
-        if (containerDTO.containerSupplier() != null && containerDTO.containerSupplier().id() != null) {
-            containerSupplier = containerSupplierRepository.findById(containerDTO.containerSupplier().id())
-                    .orElseThrow(() -> new RuntimeException("ContainerSupplier not found"));
-        }
-
-        Container container = ContainerMapper.INSTANCE.toEntity(containerDTO);
-        container.setContainerCode(containerDTO.containerCode());
-        container.setContainerSize(containerSize);
-        container.setPortLocation(portLocation);
-        container.setContainerSupplier(containerSupplier);
-        container.setHasGoods(determineHasGoods(containerDTO.status()));
-
-        // Save the container first to avoid TransientPropertyValueException
-        Container savedContainer = containerRepository.save(container);
-
-        containerDTO.shipSchedules().forEach(shipScheduleDTO -> {
-            Ship ship = shipRepository.findById(shipScheduleDTO.ship().id())
-                    .orElseThrow(() -> new RuntimeException("Ship not found with ID: " + shipScheduleDTO.ship().id()));
-            Schedule schedule = scheduleRepository.findById(shipScheduleDTO.schedule().id())
-                    .orElseThrow(() -> new RuntimeException("Schedule not found with ID: " + shipScheduleDTO.schedule().id()));
-
-            List<ShipSchedule> existingShipSchedules = shipScheduleRepository.findByShipAndScheduleAndContainerIsNull(ship, schedule);
-            if (!existingShipSchedules.isEmpty()) {
-                ShipSchedule existingShipSchedule = existingShipSchedules.get(0);
-                existingShipSchedule.setContainer(savedContainer);
-                shipScheduleRepository.save(existingShipSchedule);
-            } else {
-                ShipSchedule newShipSchedule = new ShipSchedule(savedContainer, ship, schedule);
-                shipScheduleRepository.save(newShipSchedule);
-            }
-        });
-
-        return ContainerMapper.INSTANCE.toDTO(savedContainer);
+//        ContainerSize containerSize = containerSizeRepository.findById(containerDTO.containerSize().id())
+//                .orElseThrow(() -> new RuntimeException("ContainerSize not found"));
+//
+//        PortLocation portLocation = null;
+//        if (containerDTO.portLocation() != null && containerDTO.portLocation().getId() != null) {
+//            portLocation = portLocationRepository.findById(containerDTO.portLocation().getId())
+//                    .orElseThrow(() -> new RuntimeException("PortLocation not found"));
+//        }
+//
+//        ContainerSupplier containerSupplier = null;
+//        if (containerDTO.containerSupplier() != null && containerDTO.containerSupplier().id() != null) {
+//            containerSupplier = containerSupplierRepository.findById(containerDTO.containerSupplier().id())
+//                    .orElseThrow(() -> new RuntimeException("ContainerSupplier not found"));
+//        }
+//
+//        Container container = ContainerMapper.INSTANCE.toEntity(containerDTO);
+//        container.setContainerCode(containerDTO.containerCode());
+//        container.setContainerSize(containerSize);
+//        container.setPortLocation(portLocation);
+//        container.setContainerSupplier(containerSupplier);
+//        container.setHasGoods(determineHasGoods(containerDTO.status()));
+//
+//        // Save the container first to avoid TransientPropertyValueException
+//        Container savedContainer = containerRepository.save(container);
+//
+//        containerDTO.shipSchedules().forEach(shipScheduleDTO -> {
+//            Ship ship = shipRepository.findById(shipScheduleDTO.ship().id())
+//                    .orElseThrow(() -> new RuntimeException("Ship not found with ID: " + shipScheduleDTO.ship().id()));
+//            Schedule schedule = scheduleRepository.findById(shipScheduleDTO.schedule().id())
+//                    .orElseThrow(() -> new RuntimeException("Schedule not found with ID: " + shipScheduleDTO.schedule().id()));
+//
+//            List<ShipSchedule> existingShipSchedules = shipScheduleRepository.findByShipAndScheduleAndContainerIsNull(ship, schedule);
+//            if (!existingShipSchedules.isEmpty()) {
+//                ShipSchedule existingShipSchedule = existingShipSchedules.get(0);
+//                existingShipSchedule.setContainer(savedContainer);
+//                shipScheduleRepository.save(existingShipSchedule);
+//            } else {
+//                ShipSchedule newShipSchedule = new ShipSchedule(savedContainer, ship, schedule);
+//                shipScheduleRepository.save(newShipSchedule);
+//            }
+//        });
+//
+//        return ContainerMapper.INSTANCE.toDTO(savedContainer);
+        return null ;
     }
 
     public ContainerDTO updateContainer(String containerCode, ContainerDTO containerDTO) {
-        ContainerSize containerSize = containerSizeRepository.findById(containerDTO.containerSize().id())
-                .orElseThrow(() -> new RuntimeException("ContainerSize not found"));
-
-        PortLocation portLocation = portLocationRepository.findById(containerDTO.portLocation().getId())
-                .orElseThrow(() -> new RuntimeException("PortLocation not found"));
-
-        ContainerSupplier containerSupplier;
-        if (containerDTO.containerSupplier() != null && containerDTO.containerSupplier().id() != null) {
-            containerSupplier = containerSupplierRepository.findById(containerDTO.containerSupplier().id())
-                    .orElseThrow(() -> new RuntimeException("ContainerSupplier not found"));
-        } else {
-            containerSupplier = null;
-        }
-
-        Container updatedContainer = containerRepository.findByContainerCode(containerCode)
-                .map(container -> {
-                    container.setContainerSize(containerSize);
-                    container.setStatus(containerDTO.status());
-                    container.setPortLocation(portLocation);
-                    container.setContainerSupplier(containerSupplier);
-                    container.setHasGoods(determineHasGoods(containerDTO.status()));
-                    containerDTO.shipSchedules().forEach(shipScheduleDTO -> {
-                        Ship ship = shipRepository.findById(shipScheduleDTO.ship().id())
-                                .orElseThrow(() -> new RuntimeException("Ship not found with ID: " + shipScheduleDTO.ship().id()));
-                        Schedule schedule = scheduleRepository.findById(shipScheduleDTO.schedule().id())
-                                .orElseThrow(() -> new RuntimeException("Schedule not found with ID: " + shipScheduleDTO.schedule().id()));
-
-                        List<ShipSchedule> existingShipSchedules = shipScheduleRepository.findByShipAndScheduleAndContainerIsNull(ship, schedule);
-                        if (!existingShipSchedules.isEmpty()) {
-                            ShipSchedule existingShipSchedule = existingShipSchedules.get(0);
-                            existingShipSchedule.setContainer(container);
-                            shipScheduleRepository.save(existingShipSchedule);
-                        } else {
-                            ShipSchedule newShipSchedule = new ShipSchedule(container, ship, schedule);
-                            shipScheduleRepository.save(newShipSchedule);
-                        }
-                    });
-                    return containerRepository.save(container);
-
-                })
-                .orElseThrow(() -> new RuntimeException("Container not found"));
-
-        return ContainerMapper.INSTANCE.toDTO(updatedContainer);
+//        ContainerSize containerSize = containerSizeRepository.findById(containerDTO.containerSize().id())
+//                .orElseThrow(() -> new RuntimeException("ContainerSize not found"));
+//
+//        PortLocation portLocation = portLocationRepository.findById(containerDTO.portLocation().getId())
+//                .orElseThrow(() -> new RuntimeException("PortLocation not found"));
+//
+//        ContainerSupplier containerSupplier;
+//        if (containerDTO.containerSupplier() != null && containerDTO.containerSupplier().id() != null) {
+//            containerSupplier = containerSupplierRepository.findById(containerDTO.containerSupplier().id())
+//                    .orElseThrow(() -> new RuntimeException("ContainerSupplier not found"));
+//        } else {
+//            containerSupplier = null;
+//        }
+//
+//        Container updatedContainer = containerRepository.findByContainerCode(containerCode)
+//                .map(container -> {
+//                    container.setContainerSize(containerSize);
+//                    container.setStatus(containerDTO.status());
+//                    container.setPortLocation(portLocation);
+//                    container.setContainerSupplier(containerSupplier);
+//                    container.setHasGoods(determineHasGoods(containerDTO.status()));
+//                    containerDTO.shipSchedules().forEach(shipScheduleDTO -> {
+//                        Ship ship = shipRepository.findById(shipScheduleDTO.ship().id())
+//                                .orElseThrow(() -> new RuntimeException("Ship not found with ID: " + shipScheduleDTO.ship().id()));
+//                        Schedule schedule = scheduleRepository.findById(shipScheduleDTO.schedule().id())
+//                                .orElseThrow(() -> new RuntimeException("Schedule not found with ID: " + shipScheduleDTO.schedule().id()));
+//
+//                        List<ShipSchedule> existingShipSchedules = shipScheduleRepository.findByShipAndScheduleAndContainerIsNull(ship, schedule);
+//                        if (!existingShipSchedules.isEmpty()) {
+//                            ShipSchedule existingShipSchedule = existingShipSchedules.get(0);
+//                            existingShipSchedule.setContainer(container);
+//                            shipScheduleRepository.save(existingShipSchedule);
+//                        } else {
+//                            ShipSchedule newShipSchedule = new ShipSchedule(container, ship, schedule);
+//                            shipScheduleRepository.save(newShipSchedule);
+//                        }
+//                    });
+//                    return containerRepository.save(container);
+//
+//                })
+//                .orElseThrow(() -> new RuntimeException("Container not found"));
+//
+        return null;
     }
 
     public void deleteContainer(String containerCode) {
@@ -233,7 +234,7 @@ public class ContainerService {
         container.setCustomer(customer);
         container.setLocalDateTime(LocalDateTime.now());
         for( int i = 0 ; i < request.getDetails().size() ; i++){
-            ContainerSize containerSize = containerSizeRepository.findById(request.getDetails().get(0).getContainerSizeId())
+            ContainerSize containerSize = containerSizeRepository.findById(request.getDetails().get(i).getContainerSizeId())
                     .orElseThrow(() -> new RuntimeException("ContainerSize not found"));
             container.setContainerSize(containerSize);
             for(int j = 0 ; j < request.getDetails().get(i).getQuantity(); j++) {
@@ -294,11 +295,39 @@ public class ContainerService {
          EmptyContainer emptyContainerUpdate = emptyContainerRepository.getReferenceById(id) ;
          emptyContainerUpdate.setIsApproved(1);
          emptyContainerUpdate.setApprovalDate(LocalDateTime.now());
-         emptyContainerRepository.save(emptyContainerUpdate) ;
+        autoGenerateContainerForIsApproved(emptyContainerUpdate);
+        emptyContainerRepository.save(emptyContainerUpdate) ;
+    }
+
+    private void autoGenerateContainerForIsApproved(EmptyContainer emptyContainerUpdate) {
+        PortLocation portLocation = portLocationRepository.findById(emptyContainerUpdate.getPortLocation().getId())
+                .orElseThrow(() -> new RuntimeException("PortLocation not found"));
+
+        Container container = new Container() ;
+        container.setPortLocation(portLocation);
+        container.setStatus("In Port");
+        container.setHasGoods(true);
+        container.setCustomer(emptyContainerUpdate.getCustomer());
+        container.setLocalDateTime(LocalDateTime.now());
+        for( int i = 0 ; i < emptyContainerUpdate.getDetails().size() ; i++){
+            ContainerSize containerSize = containerSizeRepository.findById(emptyContainerUpdate.getDetails().get(i).getContainerSize().getId())
+                    .orElseThrow(() -> new RuntimeException("ContainerSize not found"));
+            container.setContainerSize(containerSize);
+            for(int j = 0 ; j < emptyContainerUpdate.getDetails().get(i).getQuantity(); j++) {
+                container.setContainerCode(generateContainerCode()) ;
+                containerRepository.save(container);
+            }
+
+        }
     }
 
     public List<EmptyContainerDTO> getAllEmptyContainerIsApprove() {
-        return  emptyContainerRepository.findByIsApprovedEquals(1).stream().map(emptyContainerDTOMapper).toList() ;
+        Customer customer =  customerService.getCurrentCustomer();
+        if(customer.getRoles().stream().anyMatch(auth -> auth.equals("ADMIN"))) {
+            return emptyContainerRepository.findByIsApprovedEquals(1).stream().map(emptyContainerDTOMapper).toList() ;
+        }
+
+        return  emptyContainerRepository.findByCustomerIdAndIsApproved(customer.getId(),1).stream().map(emptyContainerDTOMapper).toList() ;
 
     }
 }
