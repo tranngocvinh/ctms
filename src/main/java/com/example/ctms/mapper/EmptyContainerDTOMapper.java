@@ -20,13 +20,7 @@ public class EmptyContainerDTOMapper implements Function<EmptyContainer, EmptyCo
        // ContainerSizeDTO containerSizeDTO = new ContainerSizeDTO(emptyContainer.getDetails().);
         List<EmptyContainerDetailDTO> details= emptyContainer.getDetails().stream()
                 .map(p -> new EmptyContainerDetailDTO(
-                        new ContainerSizeDTO(p.getContainerSize().getId(),p.getContainerSize().getLength(),
-                                p.getContainerSize().getWidth(),p.getContainerSize().getHeight(),p.getContainerSize().getVolume(),
-                                p.getContainerSize().getWeight(),p.getContainerSize().getLoadCapacity(),p.getContainerSize().getMaxLoad(),
-                                new ContainerTypeDTO(p.getContainerSize().getContainerType().getId(),
-                                        p.getContainerSize().getContainerType().getName(),
-                                p.getContainerSize().getContainerType().getType())),
-                        p.getQuantity())).collect(Collectors.toList());
+                        p.getContainer().getContainerCode())).collect(Collectors.toList());
         return new EmptyContainerDTO(
                 emptyContainer.getId(),
                 emptyContainer.getRequestTime(),

@@ -13,21 +13,18 @@ public class EmptyContainerDetail {
     @JoinColumn(name = "empty_container_id", nullable = false)
     private EmptyContainer emptyContainer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "container_size_id", nullable = false)
-    private ContainerSize containerSize;
-
-    @Column(nullable = false)
-    private int quantity;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "container_code", nullable = false)
+    private Container container;
 
     // Constructors, Getters, and Setters
 
-    public EmptyContainerDetail() {}
+    public EmptyContainerDetail() {
+    }
 
-    public EmptyContainerDetail(EmptyContainer emptyContainer,ContainerSize containerSize, int quantity) {
+    public EmptyContainerDetail(EmptyContainer emptyContainer, Container container) {
         this.emptyContainer = emptyContainer;
-        this.containerSize = containerSize;
-        this.quantity = quantity;
+        this.container = container;
     }
 
     public Integer getId() {
@@ -46,20 +43,12 @@ public class EmptyContainerDetail {
         this.emptyContainer = emptyContainer;
     }
 
-
-    public ContainerSize getContainerSize() {
-        return containerSize;
+    public Container getContainer() {
+        return container;
     }
 
-    public void setContainerSize(ContainerSize containerSize) {
-        this.containerSize = containerSize;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setContainer(Container container) {
+        this.container = container;
     }
 }
+

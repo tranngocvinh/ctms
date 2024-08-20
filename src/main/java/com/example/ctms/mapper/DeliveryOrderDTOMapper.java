@@ -38,6 +38,7 @@ public class DeliveryOrderDTOMapper implements Function<DeliveryOrder, DeliveryO
                 deliveryOrder.getTotalAmount(),
                 deliveryOrder.getStatus(),
                 deliveryOrder.getNotes(),
+                deliveryOrder.getIsPay(),
                 deliveryOrder.getCustomer().getId(),
                 deliveryOrder.getSchedule().getId(),
                 shipScheduleContainerMap  // Add the new field here

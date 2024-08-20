@@ -33,4 +33,9 @@ public class ShipController {
     public void deleteShip(@PathVariable Integer id) {
         shipService.deleteShip(id);
     }
+
+    @GetMapping("/count")
+    public long getTotalShips() {
+        return shipService.getTotalShips();
+    }
 }

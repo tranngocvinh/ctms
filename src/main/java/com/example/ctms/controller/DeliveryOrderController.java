@@ -39,6 +39,11 @@ public class DeliveryOrderController {
        deliveryOrderService.updateDeliveryOrder(id, deliveryOrderDTO);
     }
 
+    @PutMapping("/isPay/{id}")
+    public void updatePay(@PathVariable Integer id) {
+        deliveryOrderService.updatePay(id);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDeliveryOrder(@PathVariable Integer id) {
         deliveryOrderService.deleteDeliveryOrder(id);

@@ -24,11 +24,7 @@ public class ContainerSupplierService {
 
     public void insert_supplier(ContainerSupplier supplier) throws IOException {
         containerSupplierRepository.save(supplier);
-
     }
-
-
-
 
     public byte[] getCustomerById(Integer id) {
         Optional<ContainerSupplier> dbImageData = containerSupplierRepository.findById(id);

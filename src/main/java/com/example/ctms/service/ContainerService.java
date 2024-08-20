@@ -2,12 +2,12 @@ package com.example.ctms.service;
 
 import com.example.ctms.dto.ContainerDTO;
 import com.example.ctms.dto.EmptyContainerDTO;
+import com.example.ctms.dto.EmptyContainerDetailDTO;
 import com.example.ctms.dto.EmptyContainerRequestDto;
 import com.example.ctms.entity.*;
 import com.example.ctms.mapper.ContainerMapper;
 import com.example.ctms.mapper.EmptyContainerDTOMapper;
 import com.example.ctms.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,45 +20,53 @@ import java.util.stream.Collectors;
 @Service
 public class ContainerService {
 
-    @Autowired
     private ContainerRepository containerRepository;
 
-    @Autowired
     private ContainerSizeRepository containerSizeRepository;
 
-    @Autowired
     private ShipRepository shipRepository;
 
-    @Autowired
     private ScheduleRepository scheduleRepository;
 
-    @Autowired
     private EmptyContainerRepository emptyContainerRepository;
 
-    @Autowired
     private PortLocationRepository portLocationRepository;
 
-    @Autowired
     private ContainerSupplierRepository containerSupplierRepository;
 
-    @Autowired
     private ShipScheduleRepository shipScheduleRepository;
 
-    @Autowired
     private EmptyContainerDetailRepository emptyContainerDetailRepository;
 
-    @Autowired
     private  CustomerService customerService;
 
-    @Autowired
     private EmptyContainerDTOMapper emptyContainerDTOMapper;
 
+    public ContainerService(ContainerRepository containerRepository, ContainerSizeRepository containerSizeRepository, ShipRepository shipRepository, ScheduleRepository scheduleRepository, EmptyContainerRepository emptyContainerRepository, PortLocationRepository portLocationRepository, ContainerSupplierRepository containerSupplierRepository, ShipScheduleRepository shipScheduleRepository, EmptyContainerDetailRepository emptyContainerDetailRepository, CustomerService customerService, EmptyContainerDTOMapper emptyContainerDTOMapper) {
+        this.containerRepository = containerRepository;
+        this.containerSizeRepository = containerSizeRepository;
+        this.shipRepository = shipRepository;
+        this.scheduleRepository = scheduleRepository;
+        this.emptyContainerRepository = emptyContainerRepository;
+        this.portLocationRepository = portLocationRepository;
+        this.containerSupplierRepository = containerSupplierRepository;
+        this.shipScheduleRepository = shipScheduleRepository;
+        this.emptyContainerDetailRepository = emptyContainerDetailRepository;
+        this.customerService = customerService;
+        this.emptyContainerDTOMapper = emptyContainerDTOMapper;
+    }
 
-    @Autowired
-    private CustomerRepository customerRepository;
     public List<ContainerDTO> getAllContainers() {
-        List<Container> containers = containerRepository.findAll();
+        Customer customer =  customerService.getCurrentCustomer();
+        List<Container> containers = null;
+        if (customer.getRoles().stream().anyMatch(auth -> auth.equals("ADMIN") || auth.equals("STAFF"))) {
+             containers = containerRepository.findAll();
+        }else{
+             containers = containerRepository.findByCustomerId(customer.getId());
+        }
+
         return containers.stream().map(ContainerMapper.INSTANCE::toDTO).collect(Collectors.toList());
+
     }
 
     public ContainerDTO getContainerById(String containerCode) {
@@ -69,50 +77,36 @@ public class ContainerService {
 
     @Transactional
     public ContainerDTO addContainer(ContainerDTO containerDTO) {
-//        ContainerSize containerSize = containerSizeRepository.findById(containerDTO.containerSize().id())
-//                .orElseThrow(() -> new RuntimeException("ContainerSize not found"));
-//
-//        PortLocation portLocation = null;
-//        if (containerDTO.portLocation() != null && containerDTO.portLocation().getId() != null) {
-//            portLocation = portLocationRepository.findById(containerDTO.portLocation().getId())
-//                    .orElseThrow(() -> new RuntimeException("PortLocation not found"));
-//        }
-//
-//        ContainerSupplier containerSupplier = null;
-//        if (containerDTO.containerSupplier() != null && containerDTO.containerSupplier().id() != null) {
-//            containerSupplier = containerSupplierRepository.findById(containerDTO.containerSupplier().id())
-//                    .orElseThrow(() -> new RuntimeException("ContainerSupplier not found"));
-//        }
-//
-//        Container container = ContainerMapper.INSTANCE.toEntity(containerDTO);
-//        container.setContainerCode(containerDTO.containerCode());
-//        container.setContainerSize(containerSize);
-//        container.setPortLocation(portLocation);
-//        container.setContainerSupplier(containerSupplier);
-//        container.setHasGoods(determineHasGoods(containerDTO.status()));
-//
-//        // Save the container first to avoid TransientPropertyValueException
-//        Container savedContainer = containerRepository.save(container);
-//
-//        containerDTO.shipSchedules().forEach(shipScheduleDTO -> {
-//            Ship ship = shipRepository.findById(shipScheduleDTO.ship().id())
-//                    .orElseThrow(() -> new RuntimeException("Ship not found with ID: " + shipScheduleDTO.ship().id()));
-//            Schedule schedule = scheduleRepository.findById(shipScheduleDTO.schedule().id())
-//                    .orElseThrow(() -> new RuntimeException("Schedule not found with ID: " + shipScheduleDTO.schedule().id()));
-//
-//            List<ShipSchedule> existingShipSchedules = shipScheduleRepository.findByShipAndScheduleAndContainerIsNull(ship, schedule);
-//            if (!existingShipSchedules.isEmpty()) {
-//                ShipSchedule existingShipSchedule = existingShipSchedules.get(0);
-//                existingShipSchedule.setContainer(savedContainer);
-//                shipScheduleRepository.save(existingShipSchedule);
-//            } else {
-//                ShipSchedule newShipSchedule = new ShipSchedule(savedContainer, ship, schedule);
-//                shipScheduleRepository.save(newShipSchedule);
-//            }
-//        });
-//
-//        return ContainerMapper.INSTANCE.toDTO(savedContainer);
-        return null ;
+
+        ContainerSize containerSize = containerSizeRepository.findById(containerDTO.containerSize().id())
+                .orElseThrow(() -> new RuntimeException("ContainerSize not found"));
+
+        PortLocation portLocation = null;
+        if (containerDTO.portLocation() != null && containerDTO.portLocation().getId() != null) {
+            portLocation = portLocationRepository.findById(containerDTO.portLocation().getId())
+                    .orElseThrow(() -> new RuntimeException("PortLocation not found"));
+        }
+
+        ContainerSupplier containerSupplier = null;
+        if (containerDTO.containerSupplier() != null && containerDTO.containerSupplier().id() != null) {
+            containerSupplier = containerSupplierRepository.findById(containerDTO.containerSupplier().id())
+                    .orElseThrow(() -> new RuntimeException("ContainerSupplier not found"));
+        }
+
+        Container container = ContainerMapper.INSTANCE.toEntity(containerDTO);
+        container.setContainerCode(containerDTO.containerCode());
+        container.setContainerSize(containerSize);
+        container.setPortLocation(portLocation);
+        container.setContainerSupplier(containerSupplier);
+        container.setHasGoods(determineHasGoods(containerDTO.status()));
+
+        // Save the container first to avoid TransientPropertyValueException
+        Container savedContainer = containerRepository.save(container);
+
+
+
+        return ContainerMapper.INSTANCE.toDTO(savedContainer);
+
     }
 
     public ContainerDTO updateContainer(String containerCode, ContainerDTO containerDTO) {
@@ -201,50 +195,53 @@ public class ContainerService {
         emptyContainerRequest.setCustomer(customer);
         emptyContainerRepository.save(emptyContainerRequest);
 
-        for (EmptyContainerRequestDto.ContainerDetailDto detail : request.getDetails()) {
-            ContainerSize containerSize = containerSizeRepository.findById(detail.getContainerSizeId())
-                    .orElseThrow(() -> new RuntimeException("ContainerSize not found"));
+            List<Container> containers = null;
 
+        for (EmptyContainerDetailDTO detail : request.getDetails()) {
+
+                    Container eachContainer = containerRepository.findByContainerCode(detail.containerCode())
+                            .orElseThrow(() -> new RuntimeException("Container not found")); ;
+                // Add each container to the containers list
+
+            // Assuming you are creating EmptyContainerDetail for some other processing
             EmptyContainerDetail emptyContainerDetail = new EmptyContainerDetail(
                     emptyContainerRequest,
-                    containerSize,
-                    detail.getQuantity()
+                    eachContainer
             );
-
+            eachContainer.setCustomer(customer);
             emptyContainerDetailRepository.save(emptyContainerDetail);
         }
 
         emptyContainerRequest.setFulfilled(true);
         emptyContainerRequest.setSi(false);
         emptyContainerRepository.save(emptyContainerRequest);
-        if(isApproved == 1) {
-            autoGenerateContainer(request,customer);
-        }
-    }
-
-    private void autoGenerateContainer(EmptyContainerRequestDto request, Customer customer) {
-
-        PortLocation portLocation = portLocationRepository.findById(request.getPortId())
-                    .orElseThrow(() -> new RuntimeException("PortLocation not found"));
-
-        Container container = new Container() ;
-        container.setPortLocation(portLocation);
-        container.setStatus("In Port");
-        container.setHasGoods(true);
-        container.setCustomer(customer);
-        container.setLocalDateTime(LocalDateTime.now());
-        for( int i = 0 ; i < request.getDetails().size() ; i++){
-            ContainerSize containerSize = containerSizeRepository.findById(request.getDetails().get(i).getContainerSizeId())
-                    .orElseThrow(() -> new RuntimeException("ContainerSize not found"));
-            container.setContainerSize(containerSize);
-            for(int j = 0 ; j < request.getDetails().get(i).getQuantity(); j++) {
-                container.setContainerCode(generateContainerCode()) ;
-                containerRepository.save(container);
-            }
-
-        }
 
     }
+
+//    private void autoGenerateContainer(EmptyContainerRequestDto request, Customer customer) {
+//
+//        PortLocation portLocation = portLocationRepository.findById(request.getPortId())
+//                    .orElseThrow(() -> new RuntimeException("PortLocation not found"));
+//
+//        Container container = new Container() ;
+//        container.setPortLocation(portLocation);
+//        container.setStatus("In Port");
+//        container.setHasGoods(true);
+//        container.setIsRepair(0);
+//        container.setCustomer(customer);
+//        container.setLocalDateTime(LocalDateTime.now());
+//        for( int i = 0 ; i < request.getDetails().size() ; i++){
+//            ContainerSize containerSize = containerSizeRepository.findById(request.getDetails().get(i).getContainerSizeId())
+//                    .orElseThrow(() -> new RuntimeException("ContainerSize not found"));
+//            container.setContainerSize(containerSize);
+//            for(int j = 0 ; j < request.getDetails().get(i).getQuantity(); j++) {
+//                container.setContainerCode(generateContainerCode()) ;
+//                containerRepository.save(container);
+//            }
+//
+//        }
+//
+//    }
 
 
 //    @Transactional
@@ -274,8 +271,9 @@ public class ContainerService {
     private boolean determineHasGoods(String status) {
         switch (status) {
             case "In Transit":
+                return true ;
             case "In Port":
-                return true;
+                return false;
             case "Under Maintenance":
                 return false;
             default:
@@ -295,31 +293,31 @@ public class ContainerService {
          EmptyContainer emptyContainerUpdate = emptyContainerRepository.getReferenceById(id) ;
          emptyContainerUpdate.setIsApproved(1);
          emptyContainerUpdate.setApprovalDate(LocalDateTime.now());
-        autoGenerateContainerForIsApproved(emptyContainerUpdate);
+        //autoGenerateContainerForIsApproved(emptyContainerUpdate);
         emptyContainerRepository.save(emptyContainerUpdate) ;
     }
 
-    private void autoGenerateContainerForIsApproved(EmptyContainer emptyContainerUpdate) {
-        PortLocation portLocation = portLocationRepository.findById(emptyContainerUpdate.getPortLocation().getId())
-                .orElseThrow(() -> new RuntimeException("PortLocation not found"));
-
-        Container container = new Container() ;
-        container.setPortLocation(portLocation);
-        container.setStatus("In Port");
-        container.setHasGoods(true);
-        container.setCustomer(emptyContainerUpdate.getCustomer());
-        container.setLocalDateTime(LocalDateTime.now());
-        for( int i = 0 ; i < emptyContainerUpdate.getDetails().size() ; i++){
-            ContainerSize containerSize = containerSizeRepository.findById(emptyContainerUpdate.getDetails().get(i).getContainerSize().getId())
-                    .orElseThrow(() -> new RuntimeException("ContainerSize not found"));
-            container.setContainerSize(containerSize);
-            for(int j = 0 ; j < emptyContainerUpdate.getDetails().get(i).getQuantity(); j++) {
-                container.setContainerCode(generateContainerCode()) ;
-                containerRepository.save(container);
-            }
-
-        }
-    }
+//    private void autoGenerateContainerForIsApproved(EmptyContainer emptyContainerUpdate) {
+//        PortLocation portLocation = portLocationRepository.findById(emptyContainerUpdate.getPortLocation().getId())
+//                .orElseThrow(() -> new RuntimeException("PortLocation not found"));
+//
+//        Container container = new Container() ;
+//        container.setPortLocation(portLocation);
+//        container.setStatus("In Port");
+//        container.setHasGoods(true);
+//        container.setCustomer(emptyContainerUpdate.getCustomer());
+//        container.setLocalDateTime(LocalDateTime.now());
+//        for( int i = 0 ; i < emptyContainerUpdate.getDetails().size() ; i++){
+//            ContainerSize containerSize = containerSizeRepository.findById(emptyContainerUpdate.getDetails().get(i).getContainerSize().getId())
+//                    .orElseThrow(() -> new RuntimeException("ContainerSize not found"));
+//            container.setContainerSize(containerSize);
+//            for(int j = 0 ; j < emptyContainerUpdate.getDetails().get(i).getQuantity(); j++) {
+//                container.setContainerCode(generateContainerCode()) ;
+//                containerRepository.save(container);
+//            }
+//
+//        }
+//    }
 
     public List<EmptyContainerDTO> getAllEmptyContainerIsApprove() {
         Customer customer =  customerService.getCurrentCustomer();
@@ -329,5 +327,18 @@ public class ContainerService {
 
         return  emptyContainerRepository.findByCustomerIdAndIsApproved(customer.getId(),1).stream().map(emptyContainerDTOMapper).toList() ;
 
+    }
+
+    public long getTotalContainers() {
+        return containerRepository.countAllContainers();
+    }
+
+    public List<ContainerDTO> searchContainersByCode(String query) {
+        List<Container> containers = containerRepository.findByContainerCodeContainingIgnoreCase(query);
+        return containers.stream().map(ContainerMapper.INSTANCE::toDTO).collect(Collectors.toList());
+    }
+
+    public List<ContainerDTO> findContainersByPortId(Integer portId) {
+        return containerRepository.findByPortLocationId(portId).stream().map(ContainerMapper.INSTANCE::toDTO).collect(Collectors.toList());
     }
 }

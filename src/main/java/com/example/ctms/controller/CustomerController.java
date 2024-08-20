@@ -52,10 +52,19 @@ public class CustomerController {
                 .build();
     }
 
-    @PostMapping("/ship")
-    public ResponseEntity<?> registerShip(@RequestBody CustomerRegistrationRequest request) {
-        customerService.addShip(request);
-        String jwtToken = jwtUtil.issueToken(request.email(), "SHIP");
+    @PostMapping("/manager")
+    public ResponseEntity<?> registerManager(@RequestBody CustomerRegistrationRequest request) {
+        customerService.addManager(request);
+        String jwtToken = jwtUtil.issueToken(request.email(), "MANAGER");
+        return ResponseEntity.ok()
+                .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                .build();
+    }
+
+    @PostMapping("/staff")
+    public ResponseEntity<?> registerStaff(@RequestBody CustomerRegistrationRequest request) {
+        customerService.addStaff(request);
+        String jwtToken = jwtUtil.issueToken(request.email(), "STAFF");
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, jwtToken)
                 .build();
@@ -69,5 +78,10 @@ public class CustomerController {
     @PutMapping("{id}")
     public void update(@PathVariable("id") Integer id, @RequestBody CustomerUpdateRequest customerUpdateRequest) {
         customerService.update(id, customerUpdateRequest);
+    }
+
+    @GetMapping("/count")
+    public Double getTotalPaidRepairCost() {
+        return customerService.getTotalUser();
     }
 }

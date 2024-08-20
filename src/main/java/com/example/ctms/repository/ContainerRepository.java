@@ -18,4 +18,13 @@ public interface ContainerRepository extends JpaRepository<Container, String> {
 
     @Query("SELECT COALESCE(SUM(cs.weight), 0) FROM Container c JOIN c.containerSize cs JOIN c.shipSchedule ss WHERE ss.ship.id = :shipId AND c.status = 'In Transit'")
     double sumCapacityByShip(@Param("shipId") Integer shipId);
+
+    List<Container> findByCustomerId(Integer userId);
+
+    @Query("SELECT COUNT(c) FROM Container c")
+    long countAllContainers();
+
+    List<Container> findByContainerCodeContainingIgnoreCase(String query);
+
+    List<Container> findByPortLocationId(Integer portLocation_id);
 }

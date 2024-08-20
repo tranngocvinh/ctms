@@ -59,10 +59,19 @@ public class CustomerService {
         customerRepository.save(customer);
     }
 
-    public void addShip(CustomerRegistrationRequest request) {
+    public void addManager(CustomerRegistrationRequest request) {
         Customer customer = new Customer();
         customer.setName(request.name());
-        customer.setRoles(List.of("SHIP"));
+        customer.setRoles(List.of("MANAGER"));
+        customer.setEmail(request.email());
+        customer.setPassword(passwordEncoder.encode(request.password()));
+        customerRepository.save(customer);
+    }
+
+    public void addStaff(CustomerRegistrationRequest request) {
+        Customer customer = new Customer();
+        customer.setName(request.name());
+        customer.setRoles(List.of("STAFF"));
         customer.setEmail(request.email());
         customer.setPassword(passwordEncoder.encode(request.password()));
         customerRepository.save(customer);
@@ -92,7 +101,9 @@ public class CustomerService {
     }
 
 
-
+    public Double getTotalUser() {
+        return customerRepository.getTotalUser() ;
+    }
 }
 
 

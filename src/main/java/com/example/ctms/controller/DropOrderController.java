@@ -45,4 +45,9 @@ public class DropOrderController {
         dropOrderService.deleteDropOrder(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/detfee/sum")
+    public Long getTotalDetFee() {
+        return dropOrderService.getTotalDetFee();
+    }
 }

@@ -2,6 +2,7 @@ package com.example.ctms.service;
 
 import com.example.ctms.dto.SIDTO;
 import com.example.ctms.entity.CargoType;
+import com.example.ctms.entity.Customer;
 import com.example.ctms.entity.EmptyContainer;
 import com.example.ctms.entity.SI;
 import com.example.ctms.mapper.SIDTOMapper;
@@ -13,6 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class SIService {
@@ -28,9 +32,27 @@ public class SIService {
 
     @Autowired
     private SIDTOMapper sidtoMapper ;
+    @Autowired
+    private CustomerService customerService;
+
+    public List<SIDTO> getAllSIsByRole() {
+
+        Customer customer = customerService.getCurrentCustomer();
+        if (customer.getRoles().stream().anyMatch(auth -> auth.equals("ADMIN"))) {
+            return siRepository.findAll().stream().map(sidtoMapper).toList();
+        }
+        return emptyContainerRepository.findByCustomerIdAndIsApproved(customer.getId(), 1)
+                .stream()
+                .flatMap(emptyContainer ->
+                        siRepository.findByEmptyContainerId(emptyContainer.getId())
+                                .stream()
+                                .map(sidtoMapper) // Assuming `sidtoMapper` is a method reference or function to convert to `SIDTO`
+                )
+                .collect(Collectors.toList());
+    }
 
     public List<SIDTO> getAllSIs() {
-        return siRepository.findAll().stream().map(sidtoMapper).toList();
+        return siRepository.findAll().stream().map(sidtoMapper).toList()  ;
     }
 
     public Optional<SIDTO> getSIById(Integer id) {
@@ -55,7 +77,7 @@ public class SIService {
     }
 
     public SI updateSI(Integer id, SIDTO siDTO) {
-        SI si = siRepository.findById(id)
+        SI si = siRepository.findByEmptyContainerId(id)
                 .orElseThrow(() -> new RuntimeException("SI not found"));
 
         EmptyContainer emptyContainer = emptyContainerRepository.findById(siDTO.getEmptyContainerId())

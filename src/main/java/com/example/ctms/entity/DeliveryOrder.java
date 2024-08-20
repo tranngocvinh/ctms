@@ -22,7 +22,7 @@ public class DeliveryOrder {
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id", nullable = false)
     private Schedule schedule;
 
@@ -40,6 +40,9 @@ public class DeliveryOrder {
 
     @Column(length = 1000)
     private String notes;
+
+    @Column
+    private int isPay;
 
     // Constructors, Getters and Setters
 
@@ -129,7 +132,11 @@ public class DeliveryOrder {
         this.notes = notes;
     }
 
+    public int getIsPay() {
+        return isPay;
+    }
 
-
-
+    public void setIsPay(int isPay) {
+        this.isPay = isPay;
+    }
 }

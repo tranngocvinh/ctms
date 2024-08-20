@@ -8,7 +8,7 @@ public class EmptyContainerRequestDto {
     private Integer shipId;
     private LocalDateTime requestTime;
     private Integer portId;
-    private List<ContainerDetailDto> details;
+    private List<EmptyContainerDetailDTO> details;
 
     // Getters and Setters
 
@@ -44,34 +44,11 @@ public class EmptyContainerRequestDto {
         this.portId = portId;
     }
 
-    public List<ContainerDetailDto> getDetails() {
+    public List<EmptyContainerDetailDTO> getDetails() {
         return details;
     }
 
-    public void setDetails(List<ContainerDetailDto> details) {
+    public void setDetails(List<EmptyContainerDetailDTO> details) {
         this.details = details;
-    }
-
-    public static class ContainerDetailDto {
-        private Integer containerSizeId;
-        private int quantity;
-
-        // Getters and Setters
-
-        public Integer getContainerSizeId() {
-            return containerSizeId;
-        }
-
-        public void setContainerSizeId(Integer containerSizeId) {
-            this.containerSizeId = containerSizeId;
-        }
-
-        public int getQuantity() {
-            return quantity;
-        }
-
-        public void setQuantity(int quantity) {
-            this.quantity = quantity;
-        }
     }
 }

@@ -23,10 +23,17 @@ public class SIController {
         return siService.getAllSIs();
     }
 
+
+    @GetMapping("/getByRole")
+    public List<SIDTO> getAllSIsByRole() {
+        return siService.getAllSIsByRole();
+    }
+
     @GetMapping("/cargo")
     public List<CargoType> getAllCargo() {
         return siService.getAllCargo();
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<SIDTO> getSIById(@PathVariable Integer id) {

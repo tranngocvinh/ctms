@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Container {
     @Id
     @Column(length = 11, unique = true)
@@ -46,6 +46,10 @@ public class Container {
     @JoinColumn(name = "shipSchedule_id")
     private ShipSchedule shipSchedule;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "emptyContainerDetail_id")
+    private EmptyContainerDetail emptyContainerDetail;
+
     @OneToMany(mappedBy = "container", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ContainerHistory> history = new ArrayList<>();
 
@@ -54,7 +58,11 @@ public class Container {
     @JoinColumn(name = "delivery_order_id")
     private DeliveryOrder deliveryOrder;
 
+    @OneToMany(mappedBy = "container", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Repair> repairs;
 
+    @Column(nullable = true)
+    private int isRepair ;
     // Getters and Setters
     public Container() {}
 
@@ -149,7 +157,13 @@ public class Container {
         this.history = history;
     }
 
+    public EmptyContainerDetail getEmptyContainerDetail() {
+        return emptyContainerDetail;
+    }
 
+    public void setEmptyContainerDetail(EmptyContainerDetail emptyContainerDetail) {
+        this.emptyContainerDetail = emptyContainerDetail;
+    }
 
     public DeliveryOrder getDeliveryOrder() {
         return deliveryOrder;
@@ -166,5 +180,21 @@ public class Container {
 
     public void setShipSchedule(ShipSchedule shipSchedule) {
         this.shipSchedule = shipSchedule;
+    }
+
+    public List<Repair> getRepairs() {
+        return repairs;
+    }
+
+    public void setRepairs(List<Repair> repairs) {
+        this.repairs = repairs;
+    }
+
+    public int getIsRepair() {
+        return isRepair;
+    }
+
+    public void setIsRepair(int isRepair) {
+        this.isRepair = isRepair;
     }
 }

@@ -66,4 +66,9 @@ public class ShipService {
                 ship.getStatus()
         );
     }
+
+    public long getTotalShips() {
+        return shipRepository.countAllShips();
+
+    }
 }

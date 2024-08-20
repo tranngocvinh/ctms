@@ -21,7 +21,7 @@ public class ShipSchedule {
     private Schedule schedule;
 
     // If a ShipSchedule can have multiple containers, use a List to represent the one-to-many relationship
-    @OneToMany(mappedBy = "shipSchedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "shipSchedule", cascade = CascadeType.ALL, orphanRemoval = false)
     private List<Container> containers;
 
     public ShipSchedule() {}

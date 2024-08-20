@@ -12,6 +12,7 @@ public record DeliveryOrderDTO(
         Double totalAmount,
         String status,
         String notes,
+        int isPay,
         Integer customerId, // Thay vì đối tượng Customer, chỉ sử dụng ID
         Integer scheduleId, // Thay vì đối tượng Schedule, chỉ sử dụng ID
         Map<Long, List<String>> shipScheduleContainerMap // New field for mapping shipScheduleId to container codes
