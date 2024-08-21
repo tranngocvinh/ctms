@@ -93,7 +93,7 @@ public class ContainerSizeServiceTest {
 
         ContainerTypeDTO containerTypeDTO = new ContainerTypeDTO(1, "20 feet", "Normal");
         ContainerSizeDTO sizeDTO = new ContainerSizeDTO(
-                null, 6.0, 2.4, 2.6, 37.44, 200.12, 28000.0, 30000.2, containerTypeDTO
+                null, 890.0, 2.4, 2.6, 37.44, 200.12, 28000.0, 30000.2, containerTypeDTO
         );
 
         // Act
