@@ -56,7 +56,7 @@ public class DropOrderService {
         return dropOrderRepository.save(dropOrder);
     }
 
-    public DropOrder updateDropOrder(Integer id, DropOrder dropOrderDetails) {
+    public DropOrder updateDropOrder(Integer id, DropOrder dropOrderDetails) {// truyen
         DropOrder dropOrder = dropOrderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("DropOrder not found"));
 

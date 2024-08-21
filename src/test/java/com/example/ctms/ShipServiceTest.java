@@ -34,8 +34,8 @@ public class ShipServiceTest {
     @Test
     public void testGetAllShips() {
         // Arrange
-        Ship ship1 = new Ship("Ship1", "Company1", 1000.0, "Reg123", 2000, "Active");
-        Ship ship2 = new Ship("Ship2", "Company2", 2000.0, "Reg456", 2010, "Inactive");
+        Ship ship1 = new Ship("Ship1", "Company1", 1000.0, "Reg123", 2000, "Active");// check again
+        Ship ship2 = new Ship("Ship2", "Company2", 2000.0, "Reg456", 2010, "Inactive");// check data
 
         List<Ship> ships = Arrays.asList(ship1, ship2);
         when(shipRepository.findAll()).thenReturn(ships);

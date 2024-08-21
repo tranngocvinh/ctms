@@ -34,13 +34,13 @@ public class DropOrderController {
         return ResponseEntity.ok(createdDropOrder);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}")//truyen
     public ResponseEntity<DropOrder> updateDropOrder(@PathVariable Integer id, @RequestBody DropOrder dropOrderDetails) {
         DropOrder updatedDropOrder = dropOrderService.updateDropOrder(id, dropOrderDetails);
         return ResponseEntity.ok(updatedDropOrder);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}")//truyen thieu
     public ResponseEntity<Void> deleteDropOrder(@PathVariable Integer id) {
         dropOrderService.deleteDropOrder(id);
         return ResponseEntity.noContent().build();
