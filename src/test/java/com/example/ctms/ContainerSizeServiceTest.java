@@ -68,7 +68,7 @@ public class ContainerSizeServiceTest {
     public void testGetSizesByType() {
         // Arrange
         ContainerType type20FeetNormal = new ContainerType("20 feet", "Normal");
-        ContainerSize size = new ContainerSize(6.0, 2.4, 2.6, 37.44, 2000.1, 28000.0, 30000.0, type20FeetNormal);
+        ContainerSize size = new ContainerSize(6.0, 2.4, 2.6, 30.44, 2000.1, 28000.0, 30000.0, type20FeetNormal);
         when(containerSizeRepository.findByContainerTypeId(anyInt())).thenReturn(List.of(size));
 
         ContainerSizeDTO sizeDTO = ContainerMapper.INSTANCE.toContainerSizeDTO(size);
@@ -142,7 +142,7 @@ public class ContainerSizeServiceTest {
 
         ContainerTypeDTO containerTypeDTO = new ContainerTypeDTO(1, "20 feet", "Normal");
         ContainerSizeDTO sizeDTO = new ContainerSizeDTO(
-                1, 6.0, 2.4, 2.6, 37.44, 2000.1, 28000.0, 30000.0, containerTypeDTO
+                1, 6.0, 2.4, 2.3, 37.44, 2000.1, 28000.0, 30000.0, containerTypeDTO
         );
 
         // Act
