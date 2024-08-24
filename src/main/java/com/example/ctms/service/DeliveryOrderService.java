@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class DeliveryOrderService {
 
     public List<DeliveryOrderDTO> getAllDeliveryOrders() {
         Customer customer = customerService.getCurrentCustomer() ;
-        if (customer.getRoles().stream().anyMatch(auth -> auth.equals("ADMIN")) || customer.getRoles().stream().anyMatch(auth -> auth.equals("STAFF"))) {
+        if (customer.getRoles().stream().anyMatch(auth -> auth.equals("MANAGER")) ) {
             return deliveryOrderRepository.findAll().stream()
                     .map(deliveryOrderDTOMapper)
                     .toList();
@@ -181,5 +182,22 @@ public class DeliveryOrderService {
 
         order.setIsPay(1);
         deliveryOrderRepository.save(order);
+    }
+
+    public Double getTotalPaidRepairCost() {
+        return deliveryOrderRepository.sumPaiDeliveryCost();
+    }
+
+    public Map<Integer, Double> getTotalAmountByMonth() {
+        List<Map<String, Object>> results = deliveryOrderRepository.sumTotalAmountByMonth();
+        Map<Integer, Double> totalAmountByMonth = new HashMap<>();
+
+        for (Map<String, Object> result : results) {
+            Integer month = (Integer) result.get("month");
+            Double totalAmount = (Double) result.get("totalAmount");
+            totalAmountByMonth.put(month, totalAmount);
+        }
+
+        return totalAmountByMonth;
     }
 }

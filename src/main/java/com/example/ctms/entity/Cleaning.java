@@ -2,7 +2,7 @@ package com.example.ctms.entity;
 
 import jakarta.persistence.*;
 
-import javax.persistence.Table;
+import jakarta.persistence.Table;
 import java.time.LocalDate;
 
 @Entity

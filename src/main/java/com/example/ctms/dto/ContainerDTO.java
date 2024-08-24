@@ -1,6 +1,7 @@
 package com.example.ctms.dto;
 
 import com.example.ctms.entity.Customer;
+import com.example.ctms.entity.EmptyContainerDetail;
 import com.example.ctms.entity.PortLocation;
 
 import java.time.LocalDateTime;
@@ -18,5 +19,6 @@ public record ContainerDTO(
         Customer customer,
         int isApprove,
         LocalDateTime localDateTime,
-        int isRepair
+        int isRepair,
+        EmptyContainerDetailDTO emptyContainerDetail
 ) {}

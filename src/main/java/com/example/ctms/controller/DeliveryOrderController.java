@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/delivery-orders")
@@ -48,5 +49,15 @@ public class DeliveryOrderController {
     public ResponseEntity<Void> deleteDeliveryOrder(@PathVariable Integer id) {
         deliveryOrderService.deleteDeliveryOrder(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/cost/paid")
+    public Double getTotalPaidRepairCost() {
+        return deliveryOrderService.getTotalPaidRepairCost();
+    }
+
+    @GetMapping("/total-amounts-by-month")
+    public Map<Integer, Double> getTotalAmountsByMonth() {
+        return deliveryOrderService.getTotalAmountByMonth();
     }
 }

@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.xml.registry.infomodel.User;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -67,7 +69,7 @@ public class RepairService {
         Customer currentUser = customerService.getCurrentCustomer(); // Fetch current user
         List<Repair> repairs = null;
 
-        if (currentUser.getRoles().stream().anyMatch(auth -> auth.equals("ADMIN") || auth.equals("STAFF"))) {
+        if (currentUser.getRoles().stream().anyMatch(auth ->  auth.equals("STAFF"))) {
             // Admins can see all repairs
             repairs = repairRepository.findAll();
         } else {
@@ -123,7 +125,6 @@ public class RepairService {
 
     public void repairFinish(Long id) {
         Repair repair = repairRepository.findById(id).orElseThrow(() -> new RuntimeException("Repair not found with id " + id)); ;
-
         Container container = repair.getContainer();
         container.setStatus("In Port");
         container.setHasGoods(false);
@@ -141,5 +142,17 @@ public class RepairService {
 
     public Double getTotalPaidRepairCost() {
         return repairRepository.sumPaidRepairCost();
+    }
+
+    public Map<Integer, Double> getRepairCostCountByMonth() {
+        List<Map<String, Object>> results = repairRepository.sumRepairCostByMonth();
+        Map<Integer, Double> totalAmountByMonth = new HashMap<>();
+
+        for (Map<String, Object> result : results) {
+            Integer month = (Integer) result.get("month");
+            Double totalAmount = (Double) result.get("totalRepairCost");
+            totalAmountByMonth.put(month, totalAmount);
+        }
+        return totalAmountByMonth;
     }
 }

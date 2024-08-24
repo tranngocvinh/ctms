@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -49,5 +50,15 @@ public class DropOrderController {
     @GetMapping("/detfee/sum")
     public Long getTotalDetFee() {
         return dropOrderService.getTotalDetFee();
+    }
+
+    @GetMapping("/detfee-count")
+    public Map<Integer, Double> getDetFeeCountByMonth() {
+        return dropOrderService.getDetFeeCountByMonth();
+    }
+
+    @PutMapping("/isPay/{id}")
+    public void updatePay(@PathVariable Integer id) {
+        dropOrderService.updatePay(id);
     }
 }

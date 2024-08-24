@@ -10,7 +10,7 @@ import org.mapstruct.factory.Mappers;
 public interface ContainerMapper {
 
     ContainerMapper INSTANCE = Mappers.getMapper(ContainerMapper.class);
-
+    @Mapping(source = "emptyContainerDetail", target = "emptyContainerDetail")
     @Mapping(source = "containerSize", target = "containerSize")
     @Mapping(source = "portLocation", target = "portLocation")
     @Mapping(source = "containerSupplier", target = "containerSupplier")

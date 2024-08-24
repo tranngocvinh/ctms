@@ -17,7 +17,8 @@ public class DropOrderDTOMapper implements Function<DropOrder, DropOrderDTO> {
                 dropOrder.getDropDate(),
                 dropOrder.getDropLocation(),
                 dropOrder.getStatus(),
-                dropOrder.getDetFee()
+                dropOrder.getDetFee(),
+                dropOrder.getIsPay()
         );
     }
 }

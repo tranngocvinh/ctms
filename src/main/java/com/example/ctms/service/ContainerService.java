@@ -38,7 +38,7 @@ public class ContainerService {
 
     private EmptyContainerDetailRepository emptyContainerDetailRepository;
 
-    private  CustomerService customerService;
+    private CustomerService customerService;
 
     private EmptyContainerDTOMapper emptyContainerDTOMapper;
 
@@ -59,7 +59,7 @@ public class ContainerService {
     public List<ContainerDTO> getAllContainers() {
         Customer customer =  customerService.getCurrentCustomer();
         List<Container> containers = null;
-        if (customer.getRoles().stream().anyMatch(auth -> auth.equals("ADMIN") || auth.equals("STAFF"))) {
+        if (customer.getRoles().stream().anyMatch(auth -> auth.equals("MANAGER") || auth.equals("STAFF"))) {
              containers = containerRepository.findAll();
         }else{
              containers = containerRepository.findByCustomerId(customer.getId());
@@ -178,7 +178,7 @@ public class ContainerService {
 
         int isApproved = 0;
         LocalDateTime approvedDate = null ;
-        if (customer.getRoles().stream().anyMatch(auth -> auth.equals("ADMIN"))) {
+        if (customer.getRoles().stream().anyMatch(auth -> auth.equals("MANAGER"))) {
             isApproved = 1;
            approvedDate = LocalDateTime.now() ;
         }
@@ -209,6 +209,7 @@ public class ContainerService {
                     eachContainer
             );
             eachContainer.setCustomer(customer);
+            eachContainer.setEmptyContainerDetail(emptyContainerDetail);
             emptyContainerDetailRepository.save(emptyContainerDetail);
         }
 
@@ -321,7 +322,7 @@ public class ContainerService {
 
     public List<EmptyContainerDTO> getAllEmptyContainerIsApprove() {
         Customer customer =  customerService.getCurrentCustomer();
-        if(customer.getRoles().stream().anyMatch(auth -> auth.equals("ADMIN"))) {
+        if(customer.getRoles().stream().anyMatch(auth -> auth.equals("MANAGER"))) {
             return emptyContainerRepository.findByIsApprovedEquals(1).stream().map(emptyContainerDTOMapper).toList() ;
         }
 

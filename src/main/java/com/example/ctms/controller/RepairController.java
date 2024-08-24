@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -50,5 +51,10 @@ public class RepairController {
     @GetMapping("/cost/paid")
     public Double getTotalPaidRepairCost() {
         return repairService.getTotalPaidRepairCost();
+    }
+
+    @GetMapping("/repaircost-count")
+    public Map<Integer, Double> getRepairCostCountByMonth() {
+        return repairService.getRepairCostCountByMonth();
     }
 }

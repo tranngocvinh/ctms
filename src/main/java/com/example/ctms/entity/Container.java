@@ -46,7 +46,7 @@ public class Container {
     @JoinColumn(name = "shipSchedule_id")
     private ShipSchedule shipSchedule;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "emptyContainerDetail_id")
     private EmptyContainerDetail emptyContainerDetail;
 

@@ -2,6 +2,7 @@ package com.example.ctms.service;
 
 import com.example.ctms.dto.DropOrderDTO;
 import com.example.ctms.entity.Customer;
+import com.example.ctms.entity.DeliveryOrder;
 import com.example.ctms.entity.DropOrder;
 import com.example.ctms.entity.SI;
 import com.example.ctms.mapper.DropOrderDTOMapper;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -37,7 +40,7 @@ public class DropOrderService {
 
     public List<DropOrderDTO> getAllDropOrders() {
         Customer customer = customerService.getCurrentCustomer();
-        if (customer.getRoles().stream().anyMatch(auth -> auth.equals("ADMIN"))) {
+        if (customer.getRoles().stream().anyMatch(auth -> auth.equals("MANAGER"))) {
             return dropOrderRepository.findAll().stream().map(dropOrderDTOMapper).toList();
         }
         return emptyContainerRepository.findByCustomerIdAndIsApproved(customer.getId(), 1)
@@ -110,5 +113,25 @@ public class DropOrderService {
 
     public Long getTotalDetFee() {
         return dropOrderRepository.sumAllDetFee();
+    }
+
+    public Map<Integer, Double> getDetFeeCountByMonth() {
+        List<Map<String, Object>> results = dropOrderRepository.sumDetFeeByMonth();
+        Map<Integer, Double> totalAmountByMonth = new HashMap<>();
+
+        for (Map<String, Object> result : results) {
+            Integer month = (Integer) result.get("month");
+            Double totalAmount = (Double) result.get("totalDetFee");
+            totalAmountByMonth.put(month, totalAmount);
+        }
+        return totalAmountByMonth;
+    }
+
+    public void updatePay(Integer id) {
+        DropOrder order = dropOrderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("dropOrder not found with id " + id));
+
+        order.setIsPay(1);
+        dropOrderRepository.save(order);
     }
 }

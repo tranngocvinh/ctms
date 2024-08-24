@@ -38,7 +38,7 @@ public class SIService {
     public List<SIDTO> getAllSIsByRole() {
 
         Customer customer = customerService.getCurrentCustomer();
-        if (customer.getRoles().stream().anyMatch(auth -> auth.equals("ADMIN"))) {
+        if (customer.getRoles().stream().anyMatch(auth -> auth.equals("MANAGER"))) {
             return siRepository.findAll().stream().map(sidtoMapper).toList();
         }
         return emptyContainerRepository.findByCustomerIdAndIsApproved(customer.getId(), 1)

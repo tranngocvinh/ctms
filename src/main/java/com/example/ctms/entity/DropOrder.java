@@ -33,6 +33,10 @@ public class DropOrder {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+
+    @Column(nullable = true)
+    private int isPay;
+
     public DropOrder() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
@@ -120,5 +124,13 @@ public class DropOrder {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    public int getIsPay() {
+        return isPay;
+    }
+
+    public void setIsPay(int isPay) {
+        this.isPay = isPay;
     }
 }

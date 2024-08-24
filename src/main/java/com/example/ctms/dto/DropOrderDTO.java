@@ -8,6 +8,7 @@ public record DropOrderDTO (
         LocalDateTime dropDate,
         String dropLocation,
         String status,
-        Double detFee
+        Double detFee,
+        Integer isPay
 ){
 }
