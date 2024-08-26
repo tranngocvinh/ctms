@@ -41,3 +41,15 @@ spring:
     serialization:
       fail-on-empty-beans: false
     default-property-inclusion: non_null
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: vinhvinh307@gmail.com
+    password: tswk tstd rkwp yybd
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    default-encoding: UTF-8

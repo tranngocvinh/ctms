@@ -3,6 +3,7 @@ package com.example.ctms.controller;
 import com.example.ctms.dto.CustomerDTO;
 import com.example.ctms.entity.CustomerRegistrationRequest;
 import com.example.ctms.entity.CustomerUpdateRequest;
+import com.example.ctms.entity.ResetPasswordRequest;
 import com.example.ctms.jwt.JWTUtil;
 import com.example.ctms.service.CustomerService;
 import org.springframework.http.HttpHeaders;
@@ -83,5 +84,17 @@ public class CustomerController {
     @GetMapping("/count")
     public Double getTotalPaidRepairCost() {
         return customerService.getTotalUser();
+    }
+
+    @PostMapping("/forgot-password/{email}")
+    public ResponseEntity<?> forgotPassword(@PathVariable String email) {
+        customerService.generatePasswordResetToken(email);
+        return ResponseEntity.ok("Password reset link has been sent to your email.");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
+        customerService.resetPassword(request.token(), request.newPassword());
+        return ResponseEntity.ok("Password has been reset successfully.");
     }
 }
