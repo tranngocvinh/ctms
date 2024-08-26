@@ -40,7 +40,7 @@ public class DropOrderService {
 
     public List<DropOrderDTO> getAllDropOrders() {
         Customer customer = customerService.getCurrentCustomer();
-        if (customer.getRoles().stream().anyMatch(auth -> auth.equals("MANAGER"))) {
+        if (customer.getRoles().stream().anyMatch(auth -> auth.equals("MANAGER") || auth.equals("STAFF"))) {
             return dropOrderRepository.findAll().stream().map(dropOrderDTOMapper).toList();
         }
         return emptyContainerRepository.findByCustomerIdAndIsApproved(customer.getId(), 1)
@@ -71,7 +71,7 @@ public class DropOrderService {
         if (dropOrderDTO.dropDate() != null && emptyContainerApprovalDate != null) {
             long daysBetween = Duration.between(emptyContainerApprovalDate, dropOrderDTO.dropDate()).toDays();
             if (daysBetween > 3) {
-                detFee = (daysBetween - 3) * DET_FEE_PER_DAY;
+                detFee = Math.floor((daysBetween - 3) * DET_FEE_PER_DAY);
 
             }
         }

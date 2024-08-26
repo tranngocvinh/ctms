@@ -61,10 +61,20 @@ public class ContainerService {
         List<Container> containers = null;
         if (customer.getRoles().stream().anyMatch(auth -> auth.equals("MANAGER") || auth.equals("STAFF"))) {
              containers = containerRepository.findAll();
-        }else{
-             containers = containerRepository.findByCustomerId(customer.getId());
-        }
+        }else {
+            containers = emptyContainerRepository.findByCustomerIdAndIsApproved(customer.getId(), 1)
+                    .stream()
+                    .flatMap(emptyContainer ->
+                            emptyContainerDetailRepository.findEmptyContainerDetailByEmptyContainerId(emptyContainer.getId())
+                                    .stream()
+                                    .flatMap(container ->
+                                            containerRepository.findByContainerCode(container.getContainer().getContainerCode())
+                                                    .stream())
 
+                    )
+                    .collect(Collectors.toList());
+            ;
+        }
         return containers.stream().map(ContainerMapper.INSTANCE::toDTO).collect(Collectors.toList());
 
     }

@@ -37,7 +37,7 @@ public class DeliveryOrderService {
 
     public List<DeliveryOrderDTO> getAllDeliveryOrders() {
         Customer customer = customerService.getCurrentCustomer() ;
-        if (customer.getRoles().stream().anyMatch(auth -> auth.equals("MANAGER")) ) {
+        if (customer.getRoles().stream().anyMatch(auth -> auth.equals("MANAGER") || auth.equals("STAFF")) ) {
             return deliveryOrderRepository.findAll().stream()
                     .map(deliveryOrderDTOMapper)
                     .toList();

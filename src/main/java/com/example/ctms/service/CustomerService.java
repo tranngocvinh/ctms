@@ -87,6 +87,7 @@ public class CustomerService {
 
         customer.setName(customerUpdateRequest.name());
         customer.setEmail(customerUpdateRequest.email());
+        customer.setPassword(passwordEncoder.encode(customerUpdateRequest.password()));
         customerRepository.save(customer);
     }
 
