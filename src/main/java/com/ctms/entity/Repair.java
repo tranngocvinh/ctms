@@ -1,8 +1,5 @@
 package com.ctms.entity;
-
 import jakarta.persistence.*;
-
-import javax.persistence.Table;
 import java.time.LocalDate;
 
 @Entity

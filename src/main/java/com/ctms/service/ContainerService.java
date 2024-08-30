@@ -137,13 +137,11 @@ public class ContainerService {
         PortLocation portLocation = portLocationRepository.findById(request.getPortId())
                 .orElseThrow(() -> new RuntimeException("Port not found"));
 
-        double availableCapacity = ship.getCapacity() * 0.7; // 70% of ship's capacity
+        double availableCapacity = ship.getCapacity() * 25 * 0.7;
         double usedCapacity = containerRepository.sumCapacityByShip(request.getShipId());
-
         if (usedCapacity + request.getTotalCapacity() > availableCapacity) {
             throw new RuntimeException("Not enough capacity on the ship");
         }
-
         int isApproved = 0;
         LocalDateTime approvedDate = null ;
         if (customer.getRoles().stream().anyMatch(auth -> auth.equals("MANAGER"))) {
@@ -169,9 +167,7 @@ public class ContainerService {
 
                     Container eachContainer = containerRepository.findByContainerCode(detail.containerCode())
                             .orElseThrow(() -> new RuntimeException("Container not found")); ;
-                // Add each container to the containers list
 
-            // Assuming you are creating EmptyContainerDetail for some other processing
             EmptyContainerDetail emptyContainerDetail = new EmptyContainerDetail(
                     emptyContainerRequest,
                     eachContainer

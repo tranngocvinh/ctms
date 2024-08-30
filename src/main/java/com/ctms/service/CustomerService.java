@@ -42,6 +42,7 @@ public class CustomerService {
     }
 
     public CustomerDTO getCustomer(Integer customerId) {
+
         return customerRepository.findById(customerId)
                 .map(customerDTOMapper)
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
