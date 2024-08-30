@@ -55,7 +55,6 @@ public class RepairService {
         repair.setDescription(repair.getDescription());
         repair.setIsRepair(1);
         repair.setIsPayment(0) ;
-        // Update container status
         container.setStatus("Under Maintenance");
         container.setHasGoods(false);
         container.setContainerSupplier(containerSupplier);
@@ -67,17 +66,16 @@ public class RepairService {
     public List<RepairDTO> getAllRepair() {
         Customer currentUser = customerService.getCurrentCustomer(); // Fetch current user
         List<Repair> repairs = null;
-
-        if (currentUser.getRoles().stream().anyMatch(auth ->  auth.equals("STAFF"))) {
-            // Admins can see all repairs
+        boolean isStaffManager = currentUser.getRoles().stream()
+                .anyMatch(role -> role.equals("STAFF") || role.equals("MANAGER"));
+        if (isStaffManager) {
             repairs = repairRepository.findAll();
         } else {
-            // Regular users can only see repairs for containers they own or manage
-            List<String> userContainers = containerRepository.findByCustomerId(currentUser.getId())
+            List<String> userContainers = containerRepository
+                    .findByCustomerId(currentUser.getId())
                     .stream()
                     .map(Container::getContainerCode)
                     .collect(Collectors.toList());
-
             repairs = repairRepository.findByContainerContainerCodeIn(userContainers);
         }
 
