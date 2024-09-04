@@ -70,7 +70,7 @@ public class RouteServiceTest {
 
         WaypointDTO waypointDTO1 = new WaypointDTO("Port A", 10.0, 20.0);
         WaypointDTO waypointDTO2 = new WaypointDTO("Port B", 30.0, 40.0);
-        RouteSegmentDTO routeSegmentDTO = new RouteSegmentDTO(1, 2, 1);
+        RouteSegmentDTO routeSegmentDTO = new RouteSegmentDTO(1, 2, 1,23);
 
         routeDTO = new RouteDTO(1, "Route A", 1440, 1500.0, "ACTIVE", "Route from Haiphong to Singapore", List.of(waypointDTO1, waypointDTO2), List.of(routeSegmentDTO));
     }
