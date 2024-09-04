@@ -78,7 +78,7 @@ class SIServiceTest {
     }
 
     @Test
-    void testGetSIById() {//done
+    void testGetSIById() {
         when(siRepository.findById(1)).thenReturn(Optional.of(si));
 
         Optional<SIDTO> result = siService.getSIById(1);
@@ -89,7 +89,7 @@ class SIServiceTest {
     }
 
     @Test
-    void testCreateSI() {// sai
+    void testCreateSI() {
         when(emptyContainerRepository.findById(1)).thenReturn(Optional.of(emptyContainer));
         when(cargoTypeRepository.findById(1)).thenReturn(Optional.of(cargoType));
         when(siRepository.save(any(SI.class))).thenReturn(si);
@@ -104,7 +104,7 @@ class SIServiceTest {
     }
 
     @Test
-    void testUpdateSI() {//done
+    void testUpdateSI() {
         when(siRepository.findById(1)).thenReturn(Optional.of(si));
         when(emptyContainerRepository.findById(1)).thenReturn(Optional.of(emptyContainer));
         when(cargoTypeRepository.findById(1)).thenReturn(Optional.of(cargoType));
