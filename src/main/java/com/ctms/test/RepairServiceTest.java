@@ -170,7 +170,7 @@ class RepairServiceTest {
     void testUpdateRepair_Success() {
         // Given
         Repair repair = new Repair();
-        RepairDTO repairDTO = new RepairDTO("C123", 1, 100.0,"abc", new Date(), "Repair description");
+        RepairDTO repairDTO = new RepairDTO(2, 1, 100.0,"abc", new Date(), "Repair description");
 
         Container container = new Container();
         container.setContainerCode("C123");
