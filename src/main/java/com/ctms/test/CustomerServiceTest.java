@@ -61,7 +61,7 @@ public class CustomerServiceTest {
 
         registrationRequest = new CustomerRegistrationRequest("John Doe", "john.doe@example.com", "password");
 
-        updateRequest = new CustomerUpdateRequest("John Doe Updated", "john.doe.updated@example.com");
+        updateRequest = new CustomerUpdateRequest("John Doe Updated", "john.doe.updated@example.com","123456");
     }
 
     @Test

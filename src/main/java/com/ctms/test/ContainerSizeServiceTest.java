@@ -1,15 +1,15 @@
 package com.ctms.test;
 
-import com.ctms.ctms.dto.ContainerSizeDTO;
-import com.ctms.ctms.dto.ContainerTypeDTO;
-import com.ctms.ctms.entity.ContainerSize;
-import com.ctms.ctms.entity.ContainerType;
-import com.ctms.ctms.mapper.ContainerMapper;
-import com.ctms.ctms.repository.ContainerSizeRepository;
-import com.ctms.ctms.repository.ContainerTypeRepository;
-import com.ctms.ctms.repository.ScheduleRepository;
-import com.ctms.ctms.repository.ShipRepository;
-import com.ctms.ctms.service.ContainerSizeService;
+import com.ctms.dto.ContainerSizeDTO;
+import com.ctms.dto.ContainerTypeDTO;
+import com.ctms.entity.ContainerSize;
+import com.ctms.entity.ContainerType;
+import com.ctms.mapper.ContainerMapper;
+import com.ctms.repository.ContainerSizeRepository;
+import com.ctms.repository.ContainerTypeRepository;
+import com.ctms.repository.ScheduleRepository;
+import com.ctms.repository.ShipRepository;
+import com.ctms.service.ContainerSizeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

@@ -1,10 +1,10 @@
-package com.ctms.ctms;
+package com.ctms.test;
 
-import com.ctms.ctms.dto.ContainerUpdateRequest;
-import com.ctms.ctms.entity.ContainerSupplier;
-import com.ctms.ctms.repository.ContainerSupplierRepository;
-import com.ctms.ctms.service.ContainerSupplierService;
-import com.ctms.ctms.test.ImageUtils;
+import com.ctms.dto.ContainerUpdateRequest;
+import com.ctms.entity.ContainerSupplier;
+import com.ctms.repository.ContainerSupplierRepository;
+import com.ctms.service.ContainerSupplierService;
+import com.ctms.test.ImageUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

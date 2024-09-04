@@ -50,7 +50,7 @@ public class DropOrderServiceTest {
         si.setEmptyContainer(emptyContainer); // Assuming EmptyContainer has approvalDate field
 
         dropOrder = new DropOrder(si, LocalDateTime.now(), "Location A", "Pending", 0.0);
-        dropOrderDTO = new DropOrderDTO(1, LocalDateTime.now(), "Location A", "Pending");
+        dropOrderDTO = new DropOrderDTO(1,2, LocalDateTime.now(), "Location A", "Pending",12000.0,0);
     }
 
     @Test
