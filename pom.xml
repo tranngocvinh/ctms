@@ -8,7 +8,7 @@
         <version>3.2.5</version>
         <relativePath/> 
     </parent>
-    <groupId>com.example</groupId>
+    <groupId>com.ctms</groupId>
     <artifactId>ctms</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ctms</name>
