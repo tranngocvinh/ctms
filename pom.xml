@@ -8,7 +8,7 @@
         <version>3.2.5</version>
         <relativePath/> 
     </parent>
-    <groupId>com.example</groupId>
+    <groupId>com.ctms</groupId>
     <artifactId>ctms</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ctms</name>
@@ -111,6 +111,22 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test-autoconfigure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
         </dependency>
     </dependencies>
     <build>
