@@ -245,6 +245,7 @@ public class ContainerService {
         }
     }
 
+
     public List<EmptyContainerDTO> getAllEmptyContainer() {
       return  emptyContainerRepository.findByIsApprovedEquals(0).stream().map(emptyContainerDTOMapper).toList() ;
     }
