@@ -46,7 +46,6 @@ public class Schedule {
         this.codeSchedule = codeSchedule;
     }
 
-  
     // Getters and Setters
 
 
