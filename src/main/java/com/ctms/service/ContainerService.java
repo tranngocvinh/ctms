@@ -114,7 +114,6 @@ public class ContainerService {
         Container savedContainer = containerRepository.save(container);
 
 
-
         return ContainerMapper.INSTANCE.toDTO(savedContainer);
 
     }
@@ -304,6 +303,9 @@ public class ContainerService {
     }
 
     public List<ContainerDTO> findContainersByPortId(Integer portId) {
-        return containerRepository.findByPortLocationId(portId).stream().map(ContainerMapper.INSTANCE::toDTO).collect(Collectors.toList());
+        return containerRepository.findByPortLocationIdAndCustomerId(portId,null)
+                .stream()
+                .map(ContainerMapper.INSTANCE::toDTO)
+                .collect(Collectors.toList());
     }
 }
