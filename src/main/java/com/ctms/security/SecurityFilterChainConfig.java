@@ -29,6 +29,7 @@ public class SecurityFilterChainConfig {
         http.csrf().disable()
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/**").permitAll()
+
 //                        .requestMatchers("/api/proxy","/api/proxy/**").hasAnyAuthority("ADMIN", "MANAGER", "STAFF", "CUSTOMER")
 //                        .requestMatchers("/api/ships","/api/ships/**").hasAnyAuthority("ADMIN", "MANAGER", "STAFF", "CUSTOMER")
 //                        .requestMatchers("/api/containers","/api/containers/**").hasAnyAuthority("ADMIN", "MANAGER", "STAFF", "CUSTOMER")
