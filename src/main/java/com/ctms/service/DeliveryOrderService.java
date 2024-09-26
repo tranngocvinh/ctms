@@ -225,6 +225,7 @@ public class DeliveryOrderService {
         deliveryOrderRepository.save(order);
     }
 
+
     public Double getTotalPaidRepairCost() {
         return deliveryOrderRepository.sumPaiDeliveryCost();
     }
