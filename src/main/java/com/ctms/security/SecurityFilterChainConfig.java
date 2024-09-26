@@ -10,6 +10,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityFilterChainConfig {
@@ -23,15 +26,26 @@ public class SecurityFilterChainConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
+        http.csrf().disable()
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/**").permitAll()
-                        .requestMatchers("/api/**").permitAll()
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/v1/ship/**").hasRole("SHIP")
-                        .requestMatchers("/api/v1/transport/**").hasRole("TRANSPORT")
+                                .requestMatchers("/**").permitAll()
+//                        .requestMatchers("/api/proxy","/api/proxy/**").hasAnyAuthority("ADMIN", "MANAGER", "STAFF", "CUSTOMER")
+//                        .requestMatchers("/api/ships","/api/ships/**").hasAnyAuthority("ADMIN", "MANAGER", "STAFF", "CUSTOMER")
+//                        .requestMatchers("/api/containers","/api/containers/**").hasAnyAuthority("ADMIN", "MANAGER", "STAFF", "CUSTOMER")
+//                        .requestMatchers("/api/v1/supplier","/api/v1/supplier/**").permitAll()
+//                        .requestMatchers("/api/ports","/api/ports/**").hasAnyAuthority("ADMIN", "MANAGER", "STAFF", "CUSTOMER")
+//                        .requestMatchers("/api/v1/customers/reset-password","/api/v1/customers/forgot-password").permitAll()
+//                        .requestMatchers("/api/drop-orders/detfee/sum","/api/drop-orders/detfee/sum/**").hasAnyAuthority("ADMIN", "MANAGER", "STAFF")
+//                        .requestMatchers("/api/v1/repair/cost/paid","/api/v1/repair/cost/paid/**").hasAnyAuthority("ADMIN", "MANAGER", "STAFF")
+//                        .requestMatchers("/api/v1/auth","/api/v1/auth/**").permitAll()
+//                        .requestMatchers("/api/shipSchedules").hasAnyAuthority("ADMIN", "MANAGER", "STAFF", "CUSTOMER")
+//                        .requestMatchers("/api/v1/admin","/api/v1/admin/**").hasAuthority("ADMIN")
+//                        .requestMatchers("/api/v1/customers","/api/v1/customers/**").hasAnyAuthority("ADMIN", "MANAGER")
+//                        .requestMatchers("/api/containers/allocate/ship", "/api/containers/allocate/ship/**").hasAnyAuthority("MANAGER")
+//                        .requestMatchers("/api/delivery-orders/total-amounts-by-month").hasAnyAuthority("ADMIN", "MANAGER", "STAFF")
+//                        .requestMatchers("/api/drop-orders/detfee-count").hasAnyAuthority("ADMIN", "MANAGER", "STAFF")
+//                        .requestMatchers("/api/v1/repair/repaircost-count").hasAnyAuthority("ADMIN", "MANAGER", "STAFF")
+//                        .requestMatchers("/api/delivery-orders/cost/paid").hasAnyAuthority("ADMIN", "MANAGER", "STAFF")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

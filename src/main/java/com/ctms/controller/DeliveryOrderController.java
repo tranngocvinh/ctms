@@ -39,6 +39,11 @@ public class DeliveryOrderController {
        deliveryOrderService.updateDeliveryOrder(id, deliveryOrderDTO);
     }
 
+    @PutMapping("confirmToDelivery/{id}")
+    public void updatePayToDeliveryOrder(@PathVariable Integer id, @RequestBody DeliveryOrderDTO deliveryOrderDTO) {
+        deliveryOrderService.updatePayToDelivered(id, deliveryOrderDTO);
+    }
+
     @PutMapping("/isPay/{id}")
     public void updatePay(@PathVariable Integer id) {
         deliveryOrderService.updatePay(id);
