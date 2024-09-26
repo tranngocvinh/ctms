@@ -43,6 +43,8 @@ public class DeliveryOrder {
     @Column
     private int isPay;
 
+
+
     // Constructors, Getters and Setters
 
     public DeliveryOrder() {}

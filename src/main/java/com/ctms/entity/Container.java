@@ -53,7 +53,7 @@ public class Container {
     private List<ContainerHistory> history = new ArrayList<>();
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "delivery_order_id")
     private DeliveryOrder deliveryOrder;
 

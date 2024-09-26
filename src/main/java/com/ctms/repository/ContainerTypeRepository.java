@@ -7,4 +7,8 @@ import java.util.List;
 
 public interface ContainerTypeRepository extends JpaRepository<ContainerType, Integer> {
     List<ContainerType> findByNameAndType(String name, String type);
+
+
+    //Optional<Object> findByTypeAndSize(String s, String normal);
+
 }

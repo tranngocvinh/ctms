@@ -169,6 +169,47 @@ public class DeliveryOrderService {
     }
 
 
+    public void updatePayToDelivered(Integer id,DeliveryOrderDTO deliveryOrderDTO) {
+        DeliveryOrder order = deliveryOrderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Order not found with id " + id));
+
+        order.setIsPay(2);
+        order.setOrderNumber(deliveryOrderDTO.orderNumber());
+        order.setDeliveryDate(deliveryOrderDTO.deliveryDate());
+        order.setOrderDate(deliveryOrderDTO.orderDate());
+        order.setNotes(deliveryOrderDTO.notes());
+        order.setStatus(deliveryOrderDTO.status());
+        order.setTotalAmount(deliveryOrderDTO.totalAmount());
+
+        for (Map.Entry<Long, List<String>> entry : deliveryOrderDTO.shipScheduleContainerMap().entrySet()) {
+            Long shipScheduleId = entry.getKey();
+            List<String> containerCodes = entry.getValue();
+
+            // Find the corresponding ShipSchedule
+            ShipSchedule shipSchedule = shipScheduleRepository.findById(shipScheduleId)
+                    .orElseThrow(() -> new RuntimeException("ShipSchedule not found"));
+
+
+            // Thêm hoặc giữ lại các container được chọn
+            for (String containerCode : containerCodes) {
+                Container container = containerRepository.findByContainerCode(containerCode)
+                        .orElseThrow(() -> new RuntimeException("Container not found"));
+
+                // Cập nhật mối quan hệ và trạng thái của container
+                container.setDeliveryOrder(null);
+                container.setHasGoods(false);
+                container.setStatus("In Port");
+                container.setShipSchedule(shipSchedule);
+
+                containerRepository.save(container);
+            }
+
+            shipScheduleRepository.save(shipSchedule);
+        }
+        deliveryOrderRepository.save(order);
+    }
+
+
     public void deleteDeliveryOrder(Integer id) {
         DeliveryOrder order = deliveryOrderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Order not found with id " + id));

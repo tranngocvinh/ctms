@@ -1,11 +1,13 @@
 package com.ctms.repository;
 
 import com.ctms.entity.Container;
+import com.ctms.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 @EnableJpaRepositories
@@ -25,5 +27,7 @@ public interface ContainerRepository extends JpaRepository<Container, String> {
 
     List<Container> findByContainerCodeContainingIgnoreCase(String query);
 
-    List<Container> findByPortLocationId(Integer portLocation_id);
+    List<Container> findByPortLocationIdAndCustomerId(Integer portLocation_id, Integer customer);
+
+
 }
