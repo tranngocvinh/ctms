@@ -59,6 +59,8 @@ public class ContainerController {
     }
 
 
+
+
     @GetMapping("/allocate/ship/{id}")
     public Optional<EmptyContainerDTO> GetAllEmptyContainerById(@PathVariable int id) {
         return containerService.getAllEmptyContainerById(id) ;
@@ -72,6 +74,11 @@ public class ContainerController {
     @PutMapping("/allocate/ship/approved/{id}")
     public void isApproved(@PathVariable int id){
          containerService.isApproved(id) ;
+    }
+
+    @PutMapping ("/allocate/ship/reject/{id}")
+    public void isReject(@PathVariable int id){
+        containerService.isReject(id) ;
     }
 
     @GetMapping("/count")

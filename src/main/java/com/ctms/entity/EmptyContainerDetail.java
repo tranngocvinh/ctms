@@ -14,7 +14,7 @@ public class EmptyContainerDetail {
     private EmptyContainer emptyContainer;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "container_code", nullable = false)
+    @JoinColumn(name = "container_code", nullable = true)
     private Container container;
 
     // Constructors, Getters, and Setters

@@ -10,7 +10,7 @@ import java.util.Map;
 public interface DeliveryOrderRepository  extends JpaRepository<DeliveryOrder, Integer> {
 
     List<DeliveryOrder> findByCustomerId(Integer id);
-    @Query("SELECT SUM(r.totalAmount) FROM DeliveryOrder r WHERE r.isPay = 1")
+    @Query("SELECT SUM(r.totalAmount) FROM DeliveryOrder r WHERE r.isPay = 2")
     Double sumPaiDeliveryCost();
 
     @Query("SELECT MONTH(do.deliveryDate) AS month, SUM(do.totalAmount) AS totalAmount " +
