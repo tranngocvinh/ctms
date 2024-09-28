@@ -21,10 +21,13 @@ public class DeliveryOrderService {
     private final ContainerRepository containerRepository;
     private final ShipRepository shipRepository;
     private final CustomerService customerService;
+    private final PortLocationRepository portLocationRepository;
+    private final EmptyContainerRepository emptyContainerRepository;
+    private final EmptyContainerDetailRepository emptyContainerDetailRepository;
     private DeliveryOrderDTOMapper deliveryOrderDTOMapper;
 
     @Autowired
-    public DeliveryOrderService(DeliveryOrderRepository deliveryOrderRepository, ShipScheduleRepository shipScheduleRepository, CustomerRepository customerRepository, ScheduleRepository scheduleRepository, DeliveryOrderDTOMapper deliveryOrderDTOMapper, ContainerRepository containerRepository, ShipRepository shipRepository, CustomerService customerService) {
+    public DeliveryOrderService(DeliveryOrderRepository deliveryOrderRepository, ShipScheduleRepository shipScheduleRepository, CustomerRepository customerRepository, ScheduleRepository scheduleRepository, DeliveryOrderDTOMapper deliveryOrderDTOMapper, ContainerRepository containerRepository, ShipRepository shipRepository, CustomerService customerService, PortLocationRepository portLocationRepository, EmptyContainerRepository emptyContainerRepository, EmptyContainerDetailRepository emptyContainerDetailRepository) {
         this.deliveryOrderRepository = deliveryOrderRepository;
         this.shipScheduleRepository = shipScheduleRepository;
         this.customerRepository = customerRepository;
@@ -33,6 +36,9 @@ public class DeliveryOrderService {
         this.containerRepository = containerRepository;
         this.shipRepository = shipRepository;
         this.customerService = customerService;
+        this.portLocationRepository = portLocationRepository;
+        this.emptyContainerRepository = emptyContainerRepository;
+        this.emptyContainerDetailRepository = emptyContainerDetailRepository;
     }
 
     public List<DeliveryOrderDTO> getAllDeliveryOrders() {
@@ -180,7 +186,17 @@ public class DeliveryOrderService {
         order.setNotes(deliveryOrderDTO.notes());
         order.setStatus(deliveryOrderDTO.status());
         order.setTotalAmount(deliveryOrderDTO.totalAmount());
+        // Find the Schedule
+        Schedule schedule = scheduleRepository.findById(deliveryOrderDTO.scheduleId())
+                .orElseThrow(() -> new RuntimeException("Schedule not found"));
 
+        // Get the last waypoint from the schedule's waypoints list
+        List<Waypoint> waypoints = schedule.getRoute().getWaypoints();
+        if (waypoints.isEmpty()) {
+            throw new RuntimeException("No waypoints found for schedule " + schedule.getId());
+        }
+        Waypoint lastWaypoint = waypoints.get(waypoints.size() - 1); // Get the last waypoint
+        PortLocation portLocation = portLocationRepository.findByPortName(lastWaypoint.getPortName()).orElseThrow(() -> new RuntimeException("Port not found"));
         for (Map.Entry<Long, List<String>> entry : deliveryOrderDTO.shipScheduleContainerMap().entrySet()) {
             Long shipScheduleId = entry.getKey();
             List<String> containerCodes = entry.getValue();
@@ -191,6 +207,7 @@ public class DeliveryOrderService {
 
 
             // Thêm hoặc giữ lại các container được chọn
+
             for (String containerCode : containerCodes) {
                 Container container = containerRepository.findByContainerCode(containerCode)
                         .orElseThrow(() -> new RuntimeException("Container not found"));
@@ -200,7 +217,15 @@ public class DeliveryOrderService {
                 container.setHasGoods(false);
                 container.setStatus("In Port");
                 container.setShipSchedule(shipSchedule);
-
+                container.setPortLocation(portLocation);
+                container.setCustomer(null);
+                container.setEmptyContainerDetail(null);
+                EmptyContainerDetail emptyContainerDetail = emptyContainerDetailRepository.findEmptyContainerDetailByContainer_ContainerCode(containerCode)
+                        .orElseThrow(() -> new RuntimeException("Empty container detail not found"));
+                EmptyContainer emptyContainer = emptyContainerRepository.findById(emptyContainerDetail.getEmptyContainer().getId())
+                        .orElseThrow(() -> new RuntimeException("Empty container not found"));
+                emptyContainer.setCustomer(null);
+                emptyContainerDetailRepository.deleteById(emptyContainerDetail.getId());
                 containerRepository.save(container);
             }
 

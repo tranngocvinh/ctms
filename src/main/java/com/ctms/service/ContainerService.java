@@ -310,4 +310,12 @@ public class ContainerService {
                 .map(ContainerMapper.INSTANCE::toDTO)
                 .collect(Collectors.toList());
     }
+
+    public void isReject(int id) {
+        EmptyContainer emptyContainerUpdate = emptyContainerRepository.getReferenceById(id) ;
+        emptyContainerUpdate.setIsApproved(2);
+        emptyContainerUpdate.setApprovalDate(LocalDateTime.now());
+        //autoGenerateContainerForIsApproved(emptyContainerUpdate);
+        emptyContainerRepository.save(emptyContainerUpdate) ;
+    }
 }
