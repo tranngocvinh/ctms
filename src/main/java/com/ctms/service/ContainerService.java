@@ -313,6 +313,13 @@ public class ContainerService {
 
     public void isReject(int id) {
         EmptyContainer emptyContainerUpdate = emptyContainerRepository.getReferenceById(id) ;
+        List<EmptyContainerDetail> emptyContainerDetail = emptyContainerDetailRepository.findEmptyContainerDetailByEmptyContainerId(emptyContainerUpdate.getId()) ;
+      for (int i = 0 ; i < emptyContainerDetail.size() ; i++) {
+            emptyContainerDetail.get(i).getContainer().setCustomer(null);
+          emptyContainerDetail.get(i).getContainer().setEmptyContainerDetail(null);
+          emptyContainerDetailRepository.deleteById(emptyContainerDetail.get(i).getId());
+      }
+
         emptyContainerUpdate.setIsApproved(2);
         emptyContainerUpdate.setApprovalDate(LocalDateTime.now());
         //autoGenerateContainerForIsApproved(emptyContainerUpdate);
